@@ -876,7 +876,7 @@ def register():
             "phone": phone,
             "avatar": "",
             "created_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M"),
-            "balance": 2000.0,
+            "balance": 0.0,
             "income": 0.0,
             "profit": 0.0,
             "loss": 0.0,
