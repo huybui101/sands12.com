@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+{% set show_nav = false %}
+
+{% block content %}
+<section class="admin-page admin-light">
+  <div class="admin-header">
+    <div>
+      <h2 data-i18n="admin_title">Hậu đài</h2>
+      <p data-i18n="admin_subtitle">Quản lý giao diện, logo, banner, trò chơi và tỷ lệ cược.</p>
+    </div>
+    <div class="admin-meta">
+      <span data-i18n="admin_last_update">Cập nhật lần cuối</span>
+      <strong>{{ config.updated_at if config.updated_at else 'Chưa có' }}</strong>
+    </div>
+  </div>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <nav class="admin-menu">
+        <a class="menu-pill" href="#section-home" data-section="section-home" data-i18n="admin_menu_home">TRANG CHỦ</a>
+        <a class="menu-pill" href="#section-stats" data-section="section-stats" data-i18n="admin_menu_stats">THỐNG KÊ</a>
+        <a class="menu-pill" href="#section-users" data-section="section-users" data-i18n="admin_menu_users">TÀI KHOẢN KHÁCH</a>
+        <a class="menu-pill" href="#section-approval" data-section="section-approval" data-i18n="admin_menu_approval">DUYỆT NẠP RÚT</a>
+        <a class="menu-pill" href="#section-banks" data-section="section-banks" data-i18n="admin_menu_banks">THÔNG TIN NGÂN HÀNG</a>
+        <a class="menu-pill" href="#section-cskh" data-section="section-cskh" data-i18n="admin_menu_cskh">CSKH ADMIN</a>
+        <a class="menu-pill" href="#section-cskh-config" data-section="section-cskh-config" data-i18n="admin_menu_cskh_config">CẤU HÌNH CSKH</a>
+        <a class="menu-pill" href="#section-ads" data-section="section-ads" data-i18n="admin_menu_ads">LOGO & QUẢNG CÁO</a>
+        <a class="menu-pill" href="#section-game-images" data-section="section-game-images" data-i18n="admin_menu_game_images">ẢNH TRÒ CHƠI</a>
+        <a class="menu-pill" href="#section-add-game" data-section="section-add-game" data-i18n="admin_menu_add_game">THÊM TRÒ CHƠI</a>
+        <a class="menu-pill" href="#section-theme" data-section="section-theme" data-i18n="admin_menu_theme">THAY ĐỔI GIAO DIỆN</a>
+        <a class="menu-pill" href="#section-tips" data-section="section-tips" data-i18n="admin_menu_tips">MẸO NHỎ</a>
+        <a class="menu-pill" href="#section-config" data-section="section-config" data-i18n="admin_menu_config">CÀI CẤU HÌNH</a>
+        <a class="menu-pill" href="#section-fees" data-section="section-fees" data-i18n="admin_menu_fees">TÍNH TRI PHÍ NẠP RÚT</a>
+        <a class="menu-pill" href="#section-odds" data-section="section-odds" data-i18n="admin_menu_odds">TÙY CHỈNH ODDS</a>
+      </nav>
+    </aside>
+
+    <div class="admin-main">
+      <div class="admin-grid">
+        <form method="post" class="admin-form admin-block" id="section-home" data-section="section-home">
+      <input type="hidden" name="section" value="general" />
+      <div class="admin-section">
+        <h3 data-i18n="admin_general_info">Thông tin chung</h3>
+        <div class="form-grid">
+          <label><span data-i18n="admin_site_name">Tên trang web</span><input type="text" name="site_name" value="{{ config.site_name }}" /></label>
+          <label><span data-i18n="admin_odds_low">Odds 1.98</span><input type="number" step="0.01" name="odds_low" value="{{ config.odds_low }}" /></label>
+          <label><span data-i18n="admin_odds_high">Odds 2.1</span><input type="number" step="0.01" name="odds_high" value="{{ config.odds_high }}" /></label>
+        </div>
+        <div class="form-grid">
+          <label><span data-i18n="admin_theme_primary">Màu chủ đạo</span><input type="color" name="theme_primary" value="{{ config.theme_primary }}" /></label>
+          <label><span data-i18n="admin_theme_accent">Màu nhấn</span><input type="color" name="theme_accent" value="{{ config.theme_accent }}" /></label>
+        </div>
+        <div class="admin-actions">
+          <button class="btn primary" type="submit" data-i18n="admin_save_info">Lưu thông tin</button>
+        </div>
+      </div>
+      </form>
+
+      <form method="post" enctype="multipart/form-data" class="admin-form admin-block" id="section-ads" data-section="section-ads">
+      <input type="hidden" name="section" value="logo" />
+      <div class="admin-section">
+        <h3 data-i18n="admin_logo_banner">Logo & Banner</h3>
+        <label><span data-i18n="admin_logo_site">Logo trang web</span><input type="file" name="logo" accept="image/*" /></label>
+        {% if config.logo %}
+          <div class="preview-row">
+            <img src="{{ config.logo }}" alt="Logo" />
+            <label><input type="checkbox" name="clear_logo" /> <span data-i18n="admin_clear_logo">Xóa logo</span></label>
+          </div>
+        {% endif %}
+
+        <label><span data-i18n="admin_hero_images">Ảnh quảng cáo (hero)</span><input type="file" name="hero_images" accept="image/*" multiple /></label>
+        {% if config.hero_images %}
+          <div class="preview-grid">
+            {% for hero in config.hero_images %}
+              <img src="{{ hero }}" alt="Hero" />
+            {% endfor %}
+          </div>
+          <label><input type="checkbox" name="clear_heroes" /> <span data-i18n="admin_clear_heroes">Xóa tất cả hero</span></label>
+        {% endif %}
+        <div class="admin-actions">
+          <button class="btn primary" type="submit" data-i18n="admin_update_logo_banner">Cập nhật logo/banner</button>
+        </div>
+      </div>
+      </form>
+
+      <form method="post" enctype="multipart/form-data" class="admin-form admin-block" id="section-game-images" data-section="section-game-images">
+      <input type="hidden" name="section" value="game" />
+      <div class="admin-section">
+        <h3 data-i18n="admin_game_logo">Logo trò chơi</h3>
+        <div class="form-grid">
+          <label><span data-i18n="admin_select_game">Chọn trò chơi</span>
+            <select name="game_slug">
+              {% for game in games %}
+                <option value="{{ game.slug }}">{{ game.name }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label><span data-i18n="admin_upload_game_logo">Tải logo trò chơi</span>
+            <input type="file" name="game_image" accept="image/*" />
+          </label>
+        </div>
+        <label><input type="checkbox" name="clear_game_image" /> <span data-i18n="admin_clear_game_logo">Xóa logo trò chơi đã chọn</span></label>
+
+        <div class="game-preview-grid">
+          {% for game in games %}
+            <div class="game-preview-card">
+              <div class="preview-title">{{ game.name }}</div>
+              <div class="preview-image">
+                {% if config.game_images.get(game.slug) %}
+                  <img src="{{ config.game_images.get(game.slug) }}" alt="{{ game.name }}" />
+                {% else %}
+                  <div class="logo-badge">{{ game.name[:2] }}</div>
+                {% endif %}
+              </div>
+              <button class="btn ghost" type="submit" name="delete_game_slug" value="{{ game.slug }}" data-i18n="admin_delete_image">Xóa ảnh</button>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="admin-actions">
+          <button class="btn primary" type="submit" data-i18n="admin_update_game_logo">Cập nhật logo trò chơi</button>
+        </div>
+      </div>
+      </form>
+
+      <form method="post" class="admin-form admin-block" id="section-config" data-section="section-config">
+      <input type="hidden" name="section" value="marquee" />
+      <div class="admin-section">
+        <h3 data-i18n="admin_marquee">Dòng chạy lợi nhuận</h3>
+        <label><span data-i18n="admin_marquee_content">Nội dung hiển thị</span>
+          <textarea name="marquee" rows="4">{{ config.marquee | join('\n') }}</textarea>
+        </label>
+        <div class="admin-actions">
+          <button class="btn primary" type="submit" data-i18n="admin_save_content">Lưu nội dung</button>
+        </div>
+      </div>
+      </form>
+
+      <form method="post" enctype="multipart/form-data" class="admin-form admin-block" id="section-cskh-config" data-section="section-cskh-config">
+      <input type="hidden" name="section" value="cskh_config" />
+      <div class="admin-section">
+        <h3 data-i18n="admin_cskh_config">Cấu hình CSKH</h3>
+        <label><span data-i18n="admin_cskh_logo">Logo CSKH</span>
+          <input type="file" name="cskh_logo" accept="image/*" />
+        </label>
+        {% if config.cskh_logo is defined and config.cskh_logo %}
+          <div class="preview-row">
+            <img src="{{ config.cskh_logo }}" alt="CSKH Logo" />
+            <label><input type="checkbox" name="clear_cskh_logo" /> <span data-i18n="admin_clear_cskh_logo">Xóa logo CSKH</span></label>
+          </div>
+        {% endif %}
+        <label><span data-i18n="admin_cskh_notice">Thông báo trên thanh CSKH</span>
+          <input type="text" name="cskh_notice" value="{{ config.cskh_notice if config.cskh_notice is defined else '' }}" />
+        </label>
+        <div class="form-grid">
+          <label><span data-i18n="admin_cskh_title">Tiêu đề CSKH</span>
+            <input type="text" name="cskh_title" value="{{ config.cskh_title if config.cskh_title is defined else '' }}" />
+          </label>
+          <label><span data-i18n="admin_cskh_subtitle">Phụ đề CSKH</span>
+            <input type="text" name="cskh_subtitle" value="{{ config.cskh_subtitle if config.cskh_subtitle is defined else '' }}" />
+          </label>
+        </div>
+        <div class="form-grid">
+          <label><span data-i18n="admin_cskh_self_title">Tiêu đề tự phục vụ</span>
+            <input type="text" name="cskh_self_title" value="{{ config.cskh_self_title if config.cskh_self_title is defined else '' }}" />
+          </label>
+          <label><span data-i18n="admin_cskh_self_subtitle">Phụ đề tự phục vụ</span>
+            <input type="text" name="cskh_self_subtitle" value="{{ config.cskh_self_subtitle if config.cskh_self_subtitle is defined else '' }}" />
+          </label>
+        </div>
+        <label><span data-i18n="admin_cskh_banner_title">Tiêu đề banner</span>
+          <input type="text" name="cskh_banner_title" value="{{ config.cskh_banner_title if config.cskh_banner_title is defined else '' }}" />
+        </label>
+        <label><span data-i18n="admin_cskh_banner_desc">Mô tả banner</span>
+          <textarea name="cskh_banner_text" rows="3">{{ config.cskh_banner_text if config.cskh_banner_text is defined else '' }}</textarea>
+        </label>
+        <label><span data-i18n="admin_cskh_quick_guides">Hướng dẫn nhanh (mỗi dòng 1 mục)</span>
+          <textarea name="cskh_quick_guides" rows="4">{% if config.cskh_quick_guides is defined %}{{ config.cskh_quick_guides | join('\n') }}{% endif %}</textarea>
+        </label>
+        <div class="admin-actions">
+          <button class="btn primary" type="submit" data-i18n="admin_save_cskh_config">Lưu cấu hình CSKH</button>
+        </div>
+      </div>
+        </form>
+      </div>
+
+      <section class="admin-links">
+        <a class="btn ghost" href="{{ url_for('home') }}" data-i18n="admin_link_home">Link trang chủ người dùng</a>
+        <a class="btn" href="{{ url_for('admin') }}" data-i18n="admin_link_admin">Link hậu đài chỉnh sửa</a>
+        <a class="btn ghost" href="{{ url_for('admin_logout') }}" data-i18n="admin_logout">Đăng xuất hậu đài</a>
+      </section>
+
+      <section class="admin-preview admin-block" id="section-theme" data-section="section-theme">
+    <h3 data-i18n="admin_preview_title">Xem trước giao diện</h3>
+    <div class="preview-actions">
+      <a class="btn ghost" href="{{ url_for('home') }}" target="_blank" rel="noopener" data-i18n="admin_preview_pc">Xem PC</a>
+      <a class="btn" href="{{ url_for('home') }}" target="_blank" rel="noopener" data-i18n="admin_preview_mobile">Xem Mobile</a>
+    </div>
+    <p class="note" data-i18n="admin_preview_note">Dùng công cụ responsive của trình duyệt để xem mobile chi tiết.</p>
+      </section>
+
+      <section class="admin-chat admin-block" id="section-cskh" data-section="section-cskh" data-reply-endpoint="{{ url_for('admin_cskh_reply') }}">
+    <h3 data-i18n="admin_cskh_messages">CSKH - Tin nhắn người dùng</h3>
+    {% if chat_threads and chat_threads|length > 0 %}
+      <div class="admin-chat-layout">
+        <aside class="chat-thread-list">
+          {% for thread in chat_threads %}
+            <button class="chat-thread-item" type="button" data-chat-id="{{ thread.chat_id }}">
+              <div class="thread-row">
+                <div class="thread-title">{{ thread.username if thread.username else 'Ẩn danh' }}</div>
+                {% if thread.unread %}
+                  <span class="unread-badge" data-i18n="admin_new">Mới</span>
+                {% endif %}
+              </div>
+              <div class="thread-meta">ID: {{ thread.user_id if thread.user_id else thread.chat_id }}</div>
+              <div class="thread-preview">{{ thread.last_text if thread.last_text else 'Chưa có tin nhắn.' }}</div>
+              <div class="thread-time">{{ thread.last_ts }}</div>
+            </button>
+          {% endfor %}
+        </aside>
+        <div class="chat-thread-detail">
+          {% for thread in chat_threads %}
+            <div class="chat-thread-card" data-chat-id="{{ thread.chat_id }}">
+              <div class="chat-thread-header">
+                <div>
+                  <strong>{{ thread.username if thread.username else 'Ẩn danh' }}</strong>
+                  <div class="muted">ID: {{ thread.user_id if thread.user_id else thread.chat_id }}</div>
+                </div>
+                <span class="muted">{{ thread.last_ts }}</span>
+              </div>
+              <div class="chat-thread-body">
+                {% for msg in thread.messages %}
+                  <div class="chat-bubble {{ 'user' if msg.sender == 'user' else 'agent' }}">
+                    {% if msg.text %}{{ msg.text }}{% endif %}
+                    {% if msg.image %}
+                      <img class="chat-image" src="{{ msg.image }}" alt="Ảnh" />
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+              <div class="chat-thread-footer">
+                <label class="upload-btn admin" for="admin-image-{{ thread.chat_id }}" data-i18n="image">Ảnh</label>
+                <input type="file" class="chat-reply-image" id="admin-image-{{ thread.chat_id }}" accept="image/*" hidden />
+                <input class="chat-reply-input" type="text" data-i18n-placeholder="admin_reply_placeholder" placeholder="Nhập phản hồi cho khách hàng..." />
+                <button class="btn ghost small admin-reply-btn" type="button" data-i18n="send">Gửi</button>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% else %}
+      <div class="muted" data-i18n="admin_no_messages">Chưa có tin nhắn CSKH.</div>
+    {% endif %}
+      </section>
+
+      <section class="admin-placeholder admin-block" id="section-stats" data-section="section-stats">
+    <h3 data-i18n="admin_stats">Thống kê</h3>
+    {% set pending = transactions|selectattr('status', 'equalto', 'pending')|list|length %}
+    <div class="stats-grid">
+      <div class="stat-box">
+        <span data-i18n="admin_stat_users">Người dùng</span>
+        <strong>{{ users|length }}</strong>
+      </div>
+      <div class="stat-box">
+        <span data-i18n="admin_stat_balance">Tổng số dư</span>
+        <strong>{{ total_balance }}$</strong>
+      </div>
+      <div class="stat-box">
+        <span data-i18n="admin_stat_games">Tổng trò chơi</span>
+        <strong>{{ games|length }}</strong>
+      </div>
+      <div class="stat-box">
+        <span data-i18n="admin_stat_pending">Chờ duyệt</span>
+        <strong>{{ pending }}</strong>
+      </div>
+    </div>
+      </section>
+
+      <section class="admin-placeholder admin-block" id="section-users" data-section="section-users">
+    <h3 data-i18n="admin_users">Tài khoản khách</h3>
+    <div class="admin-table">
+      <div class="table-row header six">
+        <span data-i18n="admin_col_id">ID</span>
+        <span data-i18n="admin_col_name">Tên</span>
+        <span data-i18n="admin_col_balance">Số dư</span>
+        <span data-i18n="admin_col_status">Trạng thái</span>
+        <span data-i18n="admin_col_created">Ngày tạo</span>
+        <span data-i18n="admin_col_actions">Thao tác</span>
+      </div>
+      {% for user in users %}
+        <div class="table-row six">
+          <span>{{ user.id }}</span>
+          <span>{{ user.username }}</span>
+          <span>{{ user.balance }}$</span>
+          <span>{{ user.status if user.status else 'active' }}</span>
+          <span>{{ user.created_at }}</span>
+          <span>
+            <form class="inline-actions" method="post" action="{{ url_for('admin_toggle_user', user_id=user.id) }}">
+              <button class="btn ghost small" type="submit">{{ 'Mở' if user.status == 'locked' else 'Khóa' }}</button>
+            </form>
+            <form class="inline-actions" method="post" action="{{ url_for('admin_update_user_balance', user_id=user.id) }}">
+              <input class="mini-input" type="number" name="balance" min="0" step="0.01" data-i18n-placeholder="admin_balance_placeholder" placeholder="Số dư" />
+              <button class="btn ghost small" type="submit" data-i18n="admin_update">Cập nhật</button>
+            </form>
+          </span>
+        </div>
+      {% else %}
+        <div class="muted" data-i18n="admin_no_users">Chưa có người dùng.</div>
+      {% endfor %}
+    </div>
+      </section>
+
+      <section class="admin-placeholder admin-block" id="section-approval" data-section="section-approval">
+    <h3 data-i18n="admin_approval">Duyệt nạp/rút</h3>
+    <form class="inline-form" method="post" action="{{ url_for('admin_add_transaction') }}">
+      <label><span data-i18n="admin_tx_type">Loại</span>
+        <select name="tx_type">
+          <option value="deposit" data-i18n="deposit">Nạp</option>
+          <option value="withdraw" data-i18n="withdraw">Rút</option>
+        </select>
+      </label>
+      <label><span>ID người chơi</span>
+        <input type="text" name="tx_user_id" placeholder="ID người chơi" />
+      </label>
+      <label><span data-i18n="admin_account">Tài khoản</span>
+        <select name="tx_username">
+          <option value="" data-i18n="admin_select_account">Chọn tài khoản</option>
+          {% for user in users %}
+            <option value="{{ user.username }}">{{ user.username }} ({{ user.id }})</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label><span data-i18n="amount">Số tiền</span><input type="number" name="tx_amount" min="1" step="0.01" /></label>
+      <button class="btn primary" type="submit" data-i18n="admin_create_request">Tạo yêu cầu</button>
+    </form>
+    <div class="admin-table">
+      <div class="table-row header six">
+        <span data-i18n="admin_col_code">Mã</span>
+        <span data-i18n="admin_tx_type">Loại</span>
+        <span data-i18n="admin_account">Tài khoản</span>
+        <span data-i18n="admin_col_amount">Số tiền</span>
+        <span data-i18n="status_label">Trạng thái</span>
+        <span data-i18n="admin_col_actions">Thao tác</span>
+      </div>
+      {% for tx in transactions %}
+        <div class="table-row six">
+          <span>{{ tx.id }}</span>
+          <span>{{ 'Nạp' if tx.type == 'deposit' else 'Rút' }}</span>
+          <span>{{ tx.username }}</span>
+          <span>{{ tx.amount }}$</span>
+          <span>{{ tx.status }}</span>
+          <span>
+            {% if tx.status == 'pending' %}
+              <form class="inline-actions" method="post" action="{{ url_for('admin_update_transaction', tx_id=tx.id, action='approve') }}">
+                <button class="btn ghost small" type="submit" data-i18n="admin_approve">Duyệt</button>
+              </form>
+              <form class="inline-actions" method="post" action="{{ url_for('admin_update_transaction', tx_id=tx.id, action='reject') }}">
+                <button class="btn ghost small" type="submit" data-i18n="admin_reject">Từ chối</button>
+              </form>
+            {% else %}
+              <span class="muted">-</span>
+            {% endif %}
+          </span>
+        </div>
+      {% else %}
+        <div class="muted" data-i18n="admin_no_transactions">Chưa có giao dịch.</div>
+      {% endfor %}
+    </div>
+      </section>
+
+      <section class="admin-placeholder admin-block" id="section-banks" data-section="section-banks">
+    <h3 data-i18n="admin_bank_info">Thông tin ngân hàng</h3>
+    <form method="post" action="{{ url_for('admin') }}">
+          <label><span data-i18n="admin_bank_transfer_info">Thông tin chuyển khoản</span>
+            <textarea name="bank_transfer_info" rows="4" data-i18n-placeholder="admin_bank_transfer_placeholder" placeholder="Ví dụ: Ngân hàng: Vietcombank\nChủ TK: Nguyen Van A\nSTK: 123456789\nNội dung: NAP {{ '{{' }} username {{ '}}' }}">{{ config.bank_transfer_info }}</textarea>
+          </label>
+      <label><span data-i18n="admin_bank_list">Danh sách ngân hàng hỗ trợ</span>
+        <textarea name="banks_config" rows="4" data-i18n-placeholder="admin_bank_list_placeholder" placeholder="Ví dụ: Vietcombank, BIDV, Momo">{{ config.banks_config }}</textarea>
+      </label>
+      <button class="btn primary" type="submit" data-i18n="admin_save_list">Lưu danh sách</button>
+    </form>
+      </section>
+
+      <section class="admin-placeholder admin-block" id="section-add-game" data-section="section-add-game">
+    <h3 data-i18n="admin_add_game">Thêm trò chơi</h3>
+    <form class="inline-form" method="post" action="{{ url_for('admin_add_game') }}">
+      <label><span data-i18n="admin_game_name">Tên trò chơi</span><input type="text" name="game_name" data-i18n-placeholder="admin_game_name_placeholder" placeholder="Tên trò" /></label>
+      <label><span data-i18n="admin_game_category">Phân loại</span>
+        <select name="game_category">
+          <option value="casino" data-i18n="nav_casino">Casino</option>
+          <option value="lottery" data-i18n="nav_lottery">Xổ số</option>
+        </select>
+      </label>
+      <button class="btn primary" type="submit" data-i18n="admin_add">Thêm</button>
+    </form>
+      </section>
+
+      <section class="admin-placeholder admin-block" id="section-tips" data-section="section-tips">
+    <h3 data-i18n="admin_tips">Mẹo nhỏ</h3>
+    <form method="post" action="{{ url_for('admin') }}">
+      <label><span data-i18n="admin_tips_content">Nội dung mẹo nhỏ</span>
+        <textarea name="tips" rows="3" data-i18n-placeholder="admin_tips_placeholder" placeholder="Nhập mẹo hiển thị cho quản trị">{{ config.tips }}</textarea>
+      </label>
+      <button class="btn primary" type="submit" data-i18n="admin_save_tips">Lưu mẹo</button>
+    </form>
+      </section>
+
+      <section class="admin-placeholder admin-block" id="section-fees" data-section="section-fees">
+    <h3 data-i18n="admin_fees">Tính tri phí nạp rút</h3>
+    <form class="inline-form" method="post" action="{{ url_for('admin') }}">
+      <label><span data-i18n="admin_fee_deposit">Phí nạp (%)</span><input type="number" step="0.01" name="fee_deposit" value="{{ config.fee_deposit }}" /></label>
+      <label><span data-i18n="admin_fee_withdraw">Phí rút (%)</span><input type="number" step="0.01" name="fee_withdraw" value="{{ config.fee_withdraw }}" /></label>
+      <button class="btn primary" type="submit" data-i18n="admin_save_fee">Lưu phí</button>
+    </form>
+      </section>
+
+      <section class="admin-placeholder admin-block" id="section-odds" data-section="section-odds">
+    <h3 data-i18n="admin_odds">Tùy chỉnh odds theo tài khoản</h3>
+    <form class="inline-form" method="post" action="{{ url_for('admin_update_user_odds') }}">
+      <label><span data-i18n="admin_account">Tài khoản</span>
+        <select name="odds_user_id" required>
+          <option value="" data-i18n="admin_select_account">Chọn tài khoản</option>
+          {% for u in users %}
+            <option value="{{ u.id }}">{{ u.username }} ({{ u.id }})</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label><span data-i18n="admin_game">Trò chơi</span>
+        <select name="odds_game_slug" required>
+          <option value="" data-i18n="admin_select_game">Chọn trò chơi</option>
+          {% for game in games %}
+            <option value="{{ game.slug }}">{{ game.name }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label><span data-i18n="admin_odds_low">Odds 1.98</span><input type="number" name="odds_low" step="0.01" min="1" value="{{ config.odds_low }}" /></label>
+      <label><span data-i18n="admin_odds_high">Odds 2.1</span><input type="number" name="odds_high" step="0.01" min="1" value="{{ config.odds_high }}" /></label>
+      <button class="btn primary" type="submit" data-i18n="admin_update_odds">Cập nhật odds</button>
+    </form>
+    <p class="note" data-i18n="admin_odds_note">Lưu ý: Mỗi tài khoản có thể có odds riêng cho từng trò chơi.</p>
+      </section>
+    </div>
+  </div>
+</section>
+{% endblock %}

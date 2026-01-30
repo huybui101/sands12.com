@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ config.site_name if config else "Lucky 5D" }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ config.updated_at if config else '' }}" />
+  <script defer src="{{ url_for('static', filename='js/app.js') }}?v={{ config.updated_at if config else '' }}"></script>
+</head>
+<body style="--primary: {{ config.theme_primary if config else '#7d3cff' }}; --primary-2: {{ config.theme_accent if config else '#00d9ff' }};">
+  <div class="app fade-in">
+    <header class="top-bar">
+      <div class="brand">
+        <div class="logo-wrap">
+          {% if config and config.logo %}
+            <img class="logo" src="{{ config.logo }}" alt="Logo" />
+          {% else %}
+            <div class="logo placeholder">5D</div>
+          {% endif %}
+        </div>
+        <div class="brand-text">
+          <h1>{{ config.site_name if config else "Lucky 5D" }}</h1>
+        </div>
+      </div>
+      <div class="auth">
+        {% if is_admin and request.endpoint == 'admin' %}
+          <span class="user-pill">{{ admin_username }}</span>
+          <a class="btn ghost" href="{{ url_for('admin_logout') }}">Đăng xuất</a>
+        {% elif user %}
+          
+        {% else %}
+          <a class="btn ghost" href="{{ url_for('login') }}" data-i18n="login">Đăng nhập</a>
+          <a class="btn" href="{{ url_for('register') }}" data-i18n="register">Đăng ký</a>
+        {% endif %}
+      </div>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash">
+          {% for category, message in messages %}
+            <div class="flash-item {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <main class="content">
+      {% block content %}{% endblock %}
+    </main>
+
+    {% if show_nav is not defined or show_nav %}
+      <nav class="bottom-nav">
+        <a class="nav-item {{ 'active' if active_tab == 'home' else '' }}" href="{{ url_for('home') }}" data-i18n="nav_home">Trang chủ</a>
+        <a class="nav-item {{ 'active' if active_tab == 'casino' else '' }}" href="{{ url_for('casino') }}" data-i18n="nav_casino">Casino</a>
+        <a class="nav-item {{ 'active' if active_tab == 'lottery' else '' }}" href="{{ url_for('lottery') }}" data-i18n="nav_lottery">Xổ số</a>
+        <a class="nav-item {{ 'active' if active_tab == 'lobby' else '' }}" href="{{ url_for('lobby') }}" data-i18n="nav_lobby">Đại sảnh</a>
+        <a class="nav-item {{ 'active' if active_tab == 'mine' else '' }}" href="{{ url_for('mine') }}" data-i18n="nav_mine">Của tôi</a>
+      </nav>
+    {% endif %}
+  </div>
+
+  <button class="settings-gear" type="button" data-open="global-settings" aria-label="Cài đặt">⚙</button>
+
+  <div class="modal" id="global-settings">
+    <div class="modal-content">
+      <h3 data-i18n="settings_title">Cài đặt</h3>
+      <label><span data-i18n="settings_language">Ngôn ngữ</span>
+        <select class="language-select">
+          <option value="vi">Tiếng Việt</option>
+          <option value="en">English</option>
+          <option value="zh">中文</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+          <option value="th">ไทย</option>
+          <option value="fr">Français</option>
+          <option value="es">Español</option>
+        </select>
+      </label>
+      <div class="settings-actions">
+        {% if is_admin and request.endpoint == 'admin' %}
+          <a class="btn ghost" href="{{ url_for('admin_logout') }}" data-i18n="logout_admin">Đăng xuất hậu đài</a>
+        {% elif user %}
+          <a class="btn ghost" href="{{ url_for('logout') }}" data-i18n="logout">Đăng xuất</a>
+        {% else %}
+          <a class="btn ghost" href="{{ url_for('login') }}" data-i18n="login">Đăng nhập</a>
+        {% endif %}
+      </div>
+      <button class="modal-close" data-close="global-settings" data-i18n="close">Đóng</button>
+    </div>
+  </div>
+
+  <a class="floating-cskh" href="{{ url_for('cskh') }}" aria-label="CSKH">
+    {% if config and config.cskh_logo %}
+      <img src="{{ config.cskh_logo }}" alt="CSKH" onerror="this.onerror=null;this.src='/static/cskh.png';" />
+    {% else %}
+      <img src="{{ url_for('static', filename='cskh.png') }}" alt="CSKH" />
+    {% endif %}
+  </a>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section-header">
+  <h2>{{ title }}</h2>
+  <p data-i18n="section_subtitle">Chọn trò chơi để bắt đầu. Thiết kế 5D, hiệu ứng chuyển động sống động.</p>
+</section>
+
+<section class="game-grid">
+  <div class="grid">
+    {% for game in games %}
+      <a class="game-card" href="{{ url_for('game_detail', slug=game.slug) }}">
+        <div class="game-logo">
+          {% if config.game_images.get(game.slug) %}
+            <img src="{{ config.game_images.get(game.slug) }}" alt="{{ game.name }}" />
+          {% else %}
+            <div class="logo-badge">{{ game.name[:2] }}</div>
+          {% endif %}
+        </div>
+        <div class="game-info">
+          <h4>{{ game.name }}</h4>
+          <span data-i18n="odds_label" data-i18n-args='{"low":"{{ config.odds_low }}","high":"{{ config.odds_high }}"}'>Odds {{ config.odds_low }} / {{ config.odds_high }}</span>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

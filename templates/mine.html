@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="mine-header">
+  <div class="avatar-card">
+    <form class="avatar-form" method="post" enctype="multipart/form-data">
+      <div class="avatar">
+        {% if user and user.avatar %}
+          <img src="{{ user.avatar }}" alt="Avatar" />
+        {% else %}
+          <div class="avatar-placeholder">+</div>
+        {% endif %}
+      </div>
+      <input type="file" name="avatar" accept="image/*" />
+      <button class="btn ghost" type="submit" data-i18n="upload_avatar">Tải avatar</button>
+    </form>
+    <div class="avatar-info">
+      {% if user %}
+        <h3>{{ user.username }}</h3>
+        <p><span data-i18n="user_id_label">ID</span>: {{ user.id }}</p>
+      {% else %}
+        <p data-i18n="please_login">Vui lòng đăng nhập để xem thông tin.</p>
+      {% endif %}
+    </div>
+    <button class="settings-btn" data-open="settings">⚙</button>
+  </div>
+</section>
+
+<section class="wallet" id="withdraw">
+  <div class="wallet-summary">
+    <div>
+      <h4 data-i18n="total_balance">Tổng số tiền</h4>
+      <p class="amount">{{ '%.2f'|format(user.balance if user else 0) }}$</p>
+    </div>
+    <div class="wallet-stats">
+      <p><span data-i18n="income">Thu nhập</span>: <strong>{{ '%.2f'|format(income_total if user else 0) }}</strong></p>
+      <p><span data-i18n="profit_loss">Lợi nhuận & thua lỗ</span>: <strong>{{ '%.2f'|format(profit_loss if user else 0) }}</strong></p>
+    </div>
+  </div>
+  <div class="wallet-actions">
+    <button class="btn primary" type="button" data-open="deposit-modal" data-i18n="deposit">Nạp tiền</button>
+    <button class="btn ghost" type="button" data-open="withdraw-modal" data-i18n="withdraw">Rút tiền</button>
+  </div>
+</section>
+
+<section class="records">
+  <a class="record-card" href="{{ url_for('records', record_type='bet') }}" data-i18n="record_bet_history">Lịch sử cược</a>
+  <a class="record-card" href="{{ url_for('records', record_type='deposit') }}" data-i18n="record_deposit_history">Hồ sơ nạp tiền</a>
+  <a class="record-card" href="{{ url_for('records', record_type='withdraw') }}" data-i18n="record_withdraw_history">Hồ sơ rút tiền</a>
+  <a class="record-card" href="{{ url_for('records', record_type='traffic') }}" data-i18n="record_traffic">Bản ghi lưu lượng</a>
+  <a class="record-card" href="{{ url_for('records', record_type='account') }}" data-i18n="record_account">Thông tin tài khoản</a>
+  <a class="record-card" href="{{ url_for('cskh') }}" data-i18n="record_cskh">Dịch vụ CSKH</a>
+  <a class="record-card" href="{{ url_for('records', record_type='rebate') }}" data-i18n="record_rebate">Bản chi lại</a>
+  <a class="record-card" href="{{ url_for('records', record_type='created') }}" data-i18n="record_created">Thời gian tạo tài khoản</a>
+</section>
+
+
+<div class="modal" id="settings">
+  <div class="modal-content">
+    <h3 data-i18n="settings_title">Cài đặt</h3>
+    <label><span data-i18n="change_language">Đổi ngôn ngữ</span>
+      <select id="language-select">
+        <option value="vi">Tiếng Việt</option>
+        <option value="en">English</option>
+        <option value="zh">中文</option>
+        <option value="ja">日本語</option>
+        <option value="ko">한국어</option>
+        <option value="th">ไทย</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+      </select>
+    </label>
+    <label><span data-i18n="font_size">Chỉnh cỡ chữ</span>
+      <input type="range" id="font-size" min="14" max="22" value="16" />
+    </label>
+    <div class="settings-actions">
+      <button class="btn ghost" type="button" data-open="password-modal" data-i18n="change_password">Đổi mật khẩu</button>
+      <button class="btn ghost" type="button" data-open="withdraw-password-modal" data-i18n="change_withdraw_password">Đổi mật khẩu rút tiền</button>
+      <a class="btn" href="{{ url_for('logout') }}" data-i18n="logout">Đăng xuất</a>
+    </div>
+    <button class="modal-close" data-close="settings" data-i18n="close">Đóng</button>
+  </div>
+</div>
+
+<div class="modal" id="withdraw-modal">
+  <div class="modal-content">
+    <h3 data-i18n="withdraw">Rút tiền</h3>
+    {% if not user %}
+      <p data-i18n="please_login">Vui lòng đăng nhập trước.</p>
+    {% elif not user.bank %}
+      <p data-i18n="withdraw_need_bank">Bạn chưa liên kết ngân hàng. Vui lòng liên kết để tiếp tục rút tiền.</p>
+      <div class="bank-link inside-modal">
+        <h4 data-i18n="bank_link_title">Liên kết ngân hàng</h4>
+        <form method="post">
+          <div class="form-grid compact">
+            <label><span data-i18n="full_name">Họ và tên</span><input type="text" name="full_name" required /></label>
+            <label><span data-i18n="phone">Số điện thoại</span><input type="text" name="phone" required /></label>
+            <label><span data-i18n="bank_account">Số tài khoản ngân hàng</span><input type="text" name="account_number" required /></label>
+            <label><span data-i18n="bank_name">Tên ngân hàng</span>
+              <select name="bank_name" required>
+                {% for bank in banks %}
+                  <option value="{{ bank }}">{{ bank }}</option>
+                {% endfor %}
+              </select>
+            </label>
+          </div>
+          <div class="notice">
+            <p data-i18n="bank_notice_1">1. Tên thật cần trùng khớp với tên thẻ ngân hàng.</p>
+            <p data-i18n="bank_notice_2">2. Ngoại trừ tên hiệu, các dữ liệu khác không thể sửa sau khi lưu.</p>
+          </div>
+          <button class="btn primary" type="submit" data-i18n="save_bank_link">Lưu liên kết</button>
+        </form>
+      </div>
+    {% else %}
+      <div class="form-grid compact">
+        <label><span data-i18n="username_label">Tên người dùng</span><input type="text" value="{{ user.username }}" disabled /></label>
+        <label><span data-i18n="bank_name">Ngân hàng</span><input type="text" value="{{ user.bank.bank_name }}" disabled /></label>
+        <label><span data-i18n="phone">Số điện thoại</span><input type="text" value="{{ user.phone }}" disabled /></label>
+      </div>
+      <p data-i18n="withdraw_min">Số dư tối thiểu: 100$</p>
+      <label><span data-i18n="amount">Số tiền</span><input type="number" min="1" id="withdraw-amount" /></label>
+      {% if not user.withdraw_password %}
+        <label><span data-i18n="withdraw_password_new">Mật khẩu rút tiền mới</span><input type="password" id="withdraw-password-new" /></label>
+        <label><span data-i18n="withdraw_password_confirm">Nhập lại mật khẩu</span><input type="password" id="withdraw-password-confirm" /></label>
+      {% else %}
+        <label><span data-i18n="withdraw_password">Mật khẩu rút tiền</span><input type="password" id="withdraw-password" /></label>
+      {% endif %}
+      <button class="btn primary" type="button" id="withdraw-submit" data-i18n="submit_request">Gửi yêu cầu</button>
+    {% endif %}
+    <button class="modal-close" data-close="withdraw-modal" data-i18n="close">Đóng</button>
+  </div>
+</div>
+
+<div class="modal" id="deposit-modal">
+  <div class="modal-content">
+    <h3 data-i18n="deposit">Nạp tiền</h3>
+    <p data-i18n="deposit_note">Vui lòng nhập số tiền và ghi chú (nếu có).</p>
+    <label><span data-i18n="amount">Số tiền</span><input type="number" min="1" id="deposit-amount" /></label>
+    <label><span data-i18n="note">Ghi chú</span><input type="text" id="deposit-note" data-i18n-placeholder="deposit_placeholder" placeholder="Mã giao dịch / nội dung chuyển" /></label>
+    {% if config.bank_transfer_info %}
+      <div class="bank-info">
+        <strong data-i18n="bank_transfer_info">Thông tin chuyển khoản</strong>
+        <pre>{{ config.bank_transfer_info }}</pre>
+      </div>
+    {% elif config.banks_config %}
+      <div class="notice"><span data-i18n="supported_banks">Ngân hàng hỗ trợ</span>: {{ config.banks_config }}</div>
+    {% endif %}
+    <button class="btn primary" type="button" id="deposit-submit" data-i18n="submit_request">Gửi yêu cầu</button>
+    <button class="modal-close" data-close="deposit-modal" data-i18n="close">Đóng</button>
+  </div>
+</div>
+
+<div class="modal" id="password-modal">
+  <div class="modal-content">
+    <h3 data-i18n="change_login_password">Đổi mật khẩu đăng nhập</h3>
+    <label><span data-i18n="new_password">Mật khẩu mới</span><input type="password" /></label>
+    <button class="btn primary" type="button" data-i18n="update">Cập nhật</button>
+    <button class="modal-close" data-close="password-modal" data-i18n="close">Đóng</button>
+  </div>
+</div>
+
+<div class="modal" id="withdraw-password-modal">
+  <div class="modal-content">
+    <h3 data-i18n="create_withdraw_password">Tạo mật khẩu rút tiền</h3>
+    <label><span data-i18n="withdraw_password">Mật khẩu rút tiền</span><input type="password" id="withdraw-password-new" /></label>
+    <button class="btn primary" type="button" id="withdraw-password-submit" data-i18n="create_password">Tạo mật khẩu</button>
+    <button class="modal-close" data-close="withdraw-password-modal" data-i18n="close">Đóng</button>
+  </div>
+</div>
+{% endblock %}

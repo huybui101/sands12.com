@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% set show_nav = false %}
+
+{% block content %}
+<section class="game-hero">
+  <div class="game-hero-left">
+    <a class="back-link" href="{{ url_for('home') }}" data-i18n="back_home">← Trở về</a>
+    <h2>{{ game.name }}</h2>
+    <div class="game-stats">
+      <div class="stat-card">
+        <span data-i18n="time_remaining">Thời gian còn</span>
+        <strong id="countdown">10:00</strong>
+      </div>
+      <div class="stat-card">
+        <span data-i18n="rounds_running">Số vòng đang quay</span>
+        <strong id="round-count">854</strong>
+      </div>
+    </div>
+  </div>
+  <div class="game-hero-right">
+    <div class="game-banner">
+      {% if config.game_images.get(game.slug) %}
+        <img src="{{ config.game_images.get(game.slug) }}" alt="{{ game.name }}" />
+      {% else %}
+        <div class="logo-badge">{{ game.name[:2] }}</div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="bet-panel" data-game="{{ game.slug }}">
+  <div class="bet-header">
+    <h3 data-i18n="bet_choices">Lựa chọn đặt cược</h3>
+    <span data-i18n="bet_multi_select">Có thể chọn nhiều cửa</span>
+  </div>
+  <div class="result-inline">
+    <div>
+      <h3 data-i18n="result">Kết quả</h3>
+      <p id="result-text" data-i18n="waiting_result">Đang chờ kết quả...</p>
+    </div>
+    <a class="btn ghost small" href="{{ url_for('records', record_type='bet') }}" data-i18n="view_bet_history">Xem lịch sử cược</a>
+  </div>
+  <div class="bet-grid-labels">
+    <span data-i18n="result_label">Kết quả</span>
+    <span data-i18n="system_label">Hệ thống</span>
+  </div>
+  <div class="bet-grid" data-max="2">
+    <div class="bet-pair">
+      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_big">Lớn</span> <span>{{ user_odds.odds_high }}</span></button>
+      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_small">Nhỏ</span> <span>{{ user_odds.odds_high }}</span></button>
+    </div>
+    <div class="bet-pair">
+      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_big_plus">Lớn to</span> <span>{{ user_odds.odds_high }}</span></button>
+      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_small_plus">Nhỏ bé</span> <span>{{ user_odds.odds_high }}</span></button>
+    </div>
+    <div class="bet-pair">
+      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_lottery_big">Sổ xố to</span> <span>{{ user_odds.odds_high }}</span></button>
+      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_lottery_small">Sổ xố nhỏ</span> <span>{{ user_odds.odds_high }}</span></button>
+    </div>
+    <div class="bet-pair">
+      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_animal_big">Con to</span> <span>{{ user_odds.odds_high }}</span></button>
+      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_animal_small">Con nhỏ</span> <span>{{ user_odds.odds_high }}</span></button>
+    </div>
+    <div class="bet-pair">
+      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_hot">Nóng</span> <span>{{ user_odds.odds_high }}</span></button>
+      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_cold">Lạnh</span> <span>{{ user_odds.odds_high }}</span></button>
+    </div>
+    <div class="bet-pair">
+      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_super13">Tuyệt 13 cực nổ</span> <span>{{ user_odds.odds_high }}</span></button>
+      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_bao60">Báo 60</span> <span>{{ user_odds.odds_high }}</span></button>
+    </div>
+    <div class="bet-pair">
+      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_wave_red">Làn sóng đỏ</span> <span>{{ user_odds.odds_high }}</span></button>
+      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_wave_blue">Làn sóng xanh</span> <span>{{ user_odds.odds_high }}</span></button>
+    </div>
+    <div class="bet-pair">
+      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_wave_purple">Làn sóng tím</span> <span>{{ user_odds.odds_high }}</span></button>
+      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_wave_yellow">Làn sóng vàng</span> <span>{{ user_odds.odds_high }}</span></button>
+    </div>
+  </div>
+
+  <div class="bet-footer">
+    <div class="bet-status">
+      <span><span data-i18n="selected_count">Đã chọn</span>: <strong id="selected-count">0</strong> <span data-i18n="door_label">cửa</span></span>
+      <span class="note" data-i18n="total_formula">Tổng tiền = số tiền mỗi cửa × số cửa đã chọn</span>
+      <span class="bet-warning" id="bet-warning" data-i18n="too_many_doors">Bạn đã chọn quá nhiều cửa.</span>
+      <span class="bet-warning balance" id="balance-warning" data-i18n="bet_over_balance">Tổng cược vượt số dư.</span>
+    </div>
+    <div class="bet-summary">
+      <div>
+        <span data-i18n="per_door">Mỗi cửa</span>
+        <strong id="bet-per-door">0.00$</strong>
+      </div>
+      <div>
+        <span data-i18n="total_amount">Tổng tiền</span>
+        <strong id="bet-total">0.00$</strong>
+      </div>
+      <div>
+        <span data-i18n="balance_after">Số dư sau cược</span>
+        <strong id="bet-balance-after">0.00$</strong>
+      </div>
+      <div>
+        <span data-i18n="net_estimate">Ước tính lãi/lỗ</span>
+        <strong id="bet-net">0.00$</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="bet-history-cta">
+    <div>
+      <strong data-i18n="bet_history">Lịch sử cược</strong>
+      <div class="bet-history-note" data-i18n="bet_history_note">Xem chi tiết cược đang chạy và kết quả tại đây.</div>
+    </div>
+    <a class="btn ghost small" href="{{ url_for('records', record_type='bet') }}" data-i18n="open_history">Mở lịch sử</a>
+  </div>
+
+  <div class="bet-amount" data-balance="{{ user.balance if user else 0 }}">
+    <h3 data-i18n="bet_amount_title">Tiền đặt cược</h3>
+    <div class="balance-row"><span data-i18n="current_balance">Số dư hiện tại</span>: <strong id="balance-value">{{ user.balance if user else 0 }}$</strong></div>
+    <div class="bet-amount-row">
+      <button class="amount-chip" data-percent="10">10%</button>
+      <button class="amount-chip" data-percent="20">20%</button>
+      <button class="amount-chip" data-percent="30">30%</button>
+      <button class="amount-chip" data-percent="40">40%</button>
+      <button class="amount-chip" data-percent="50">50%</button>
+    </div>
+    <div class="bet-amount-input">
+      <div class="input-col">
+        <label for="bet-amount" data-i18n="custom_amount">Số tiền tự chọn</label>
+        <input type="number" min="1" step="0.01" id="bet-amount" inputmode="decimal" data-i18n-placeholder="enter_amount" placeholder="Nhập số tiền" />
+        <small class="helper" id="bet-max-per-door" data-i18n="max_per_door_hint">Chọn cửa để xem tối đa mỗi cửa.</small>
+      </div>
+      <button class="btn primary" type="button" id="bet-submit" disabled data-i18n="place_bet">Đặt cược</button>
+    </div>
+  </div>
+</section>
+{% endblock %}

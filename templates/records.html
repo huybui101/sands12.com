@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% set show_nav = false %}
+
+{% block content %}
+<section class="records-page">
+  <a class="back-link" href="{{ url_for('mine') }}" data-i18n="back">← Trở về</a>
+  {% set title_map = {
+    'bet': 'Lịch sử cược',
+    'deposit': 'Nạp tiền',
+    'withdraw': 'Rút tiền',
+    'account': 'Thông tin tài khoản',
+    'created': 'Thời gian tạo tài khoản'
+  } %}
+  <h2 data-i18n="records_title_{{ record_type }}">{{ title_map.get(record_type, 'Lịch sử') }}</h2>
+  <div class="record-list">
+    {% if record_type == 'bet' %}
+      {% if records and records|length > 0 %}
+        {% for item in records|reverse %}
+          {% set total_stake = item.total_stake if item.total_stake is defined else item.amount %}
+          {% set net = (item.payout - total_stake) if item.status == 'win' else (-total_stake) %}
+          <div class="record-item">
+            <div>
+              <strong>{{ item.selections | join(' / ') }}</strong>
+              <div class="record-meta">
+                <span data-i18n="record_round">Vòng</span> {{ item.round }} • {{ item.created_at }} •
+                <span data-i18n="record_result">KQ</span>: {{ item.outcome or '...' }}
+              </div>
+            </div>
+            <div class="record-amount {{ item.status }}">
+              {% if item.status == 'win' %}
+                {% if net >= 0 %}<span data-i18n="record_win">Lãi</span> +{{ '%.2f'|format(net) }}${% else %}<span data-i18n="record_lose">Lỗ</span> {{ '%.2f'|format(net) }}${% endif %}
+              {% elif item.status == 'lose' %}
+                <span data-i18n="record_lose">Lỗ</span> -{{ '%.2f'|format(total_stake) }}$
+              {% else %}
+                <span data-i18n="record_pending">Đang chờ</span>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="record-item empty" data-i18n="record_no_data">Chưa có dữ liệu.</div>
+      {% endif %}
+    {% elif record_type in ['deposit', 'withdraw'] %}
+      {% if records and records|length > 0 %}
+        {% for item in records|reverse %}
+          <div class="record-item">
+            <div>
+              <strong>
+                {% if item.type == 'deposit' %}
+                  <span data-i18n="deposit">Nạp tiền</span>
+                {% else %}
+                  <span data-i18n="withdraw">Rút tiền</span>
+                {% endif %}
+              </strong>
+              {% set status_label = {
+                'pending': 'Đang chờ',
+                'approved': 'Đã duyệt',
+                'rejected': 'Từ chối'
+              } %}
+              <div class="record-meta">
+                {{ item.created_at }} • <span data-i18n="status_label">Trạng thái</span>:
+                <span data-i18n="status_{{ item.status }}">{{ status_label.get(item.status, item.status) }}</span>
+                {% if item.updated_at %} • <span data-i18n="updated_label">Cập nhật</span>: {{ item.updated_at }}{% endif %}
+              </div>
+              {% if item.fee is defined %}
+                <div class="record-meta">
+                  <span data-i18n="fee_label">Phí</span>: {{ item.fee }}$ •
+                  <span data-i18n="net_label">Thực nhận</span>: {{ item.net_amount }}$
+                </div>
+              {% endif %}
+            </div>
+            <div class="record-amount {{ item.status }}">{{ item.amount }}$</div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="record-item empty" data-i18n="record_no_data">Chưa có dữ liệu.</div>
+      {% endif %}
+    {% elif record_type in ['account', 'created'] %}
+      {% if records and records|length > 0 %}
+        {% for item in records %}
+          <div class="record-item">
+            <div>
+              <strong>{{ item.label }}</strong>
+              <div class="record-meta">{{ item.value }}</div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="record-item empty" data-i18n="record_no_data">Chưa có dữ liệu.</div>
+      {% endif %}
+    {% else %}
+      <div class="record-item empty" data-i18n="record_no_data">Chưa có dữ liệu.</div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

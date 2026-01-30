@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% set show_nav = false %}
+
+{% block content %}
+<section class="cskh-page">
+  <div class="cskh-bar">
+    <span>{{ config.cskh_notice if config.cskh_notice is defined else 'CSKH luôn sẵn sàng phục vụ 24/7' }}</span>
+    <a class="btn ghost small" href="{{ url_for('home') }}" data-i18n="close">Đóng</a>
+  </div>
+
+  <div class="cskh-body">
+    <aside class="cskh-sidebar">
+      <div class="cskh-agent">
+        <div class="agent-avatar">
+          {% if config.cskh_logo is defined and config.cskh_logo %}
+            <img src="{{ config.cskh_logo }}" alt="CSKH" onerror="this.onerror=null;this.src='/static/cskh.png';" />
+          {% else %}
+            CS
+          {% endif %}
+        </div>
+        <div>
+          <strong>{{ config.cskh_title if config.cskh_title is defined else 'CSKH SANDS' }}</strong>
+          <div class="muted" data-i18n="cskh_subtitle">{{ config.cskh_subtitle if config.cskh_subtitle is defined else 'Hỗ trợ 24/7' }}</div>
+        </div>
+      </div>
+      <div class="cskh-agent">
+        <div class="agent-avatar">HD</div>
+        <div>
+          <strong>{{ config.cskh_self_title if config.cskh_self_title is defined else 'Hướng dẫn tự phục vụ' }}</strong>
+          <div class="muted" data-i18n="cskh_self_subtitle">{{ config.cskh_self_subtitle if config.cskh_self_subtitle is defined else 'Nhanh & tiện lợi' }}</div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="cskh-main">
+      <div class="cskh-banner">
+        <div class="banner-content">
+          <h2>{{ config.cskh_banner_title if config.cskh_banner_title is defined else 'Hỗ trợ khách hàng nhanh chóng' }}</h2>
+          <p>{{ config.cskh_banner_text if config.cskh_banner_text is defined else 'Hệ thống chăm sóc khách hàng 24/7. Trả lời trong vài phút.' }}</p>
+          <a class="btn primary" href="#cskh-chat" data-i18n="start_chat">Bắt đầu chat</a>
+        </div>
+      </div>
+
+      <div class="cskh-card">
+        <h3 data-i18n="quick_guide">Hướng dẫn nhanh</h3>
+        <ul>
+          {% if config.cskh_quick_guides is defined and config.cskh_quick_guides %}
+            {% for item in config.cskh_quick_guides %}
+              <li>{{ item }}</li>
+            {% endfor %}
+          {% else %}
+            <li>Gửi yêu cầu nạp/rút tiền.</li>
+            <li>Hỗ trợ tài khoản và bảo mật.</li>
+            <li>Tra cứu lịch sử giao dịch.</li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <div class="cskh-chat" id="cskh-chat" data-endpoint="{{ url_for('cskh_messages') }}">
+        <div class="chat-message" data-i18n="cskh_welcome">Xin chào! Tôi có thể giúp gì cho bạn?</div>
+      </div>
+
+      <div class="cskh-input">
+        <label class="upload-btn" for="cskh-image" data-i18n="image">Ảnh</label>
+        <input type="file" id="cskh-image" accept="image/*" hidden />
+        <input type="text" id="cskh-message" data-i18n-placeholder="enter_message" placeholder="Nhập tin nhắn..." />
+        <button class="btn" type="button" id="cskh-send" data-i18n="send">Gửi</button>
+      </div>
+    </main>
+  </div>
+</section>
+{% endblock %}

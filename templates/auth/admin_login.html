@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% set show_nav = false %}
+
+{% block content %}
+<section class="auth-page">
+  <div class="auth-card">
+    <h2 data-i18n="admin_login">Đăng nhập hậu đài</h2>
+    <form method="post">
+      <label><span data-i18n="username">Tài khoản</span><input type="text" name="username" required /></label>
+      <label><span data-i18n="password">Mật khẩu</span><input type="password" name="password" required /></label>
+      <button class="btn primary" type="submit" data-i18n="login">Đăng nhập</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

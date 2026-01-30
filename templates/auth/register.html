@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% set show_nav = false %}
+
+{% block content %}
+<section class="auth-page">
+  <div class="auth-card">
+    <h2 data-i18n="register">Đăng ký</h2>
+    <form method="post" id="register-form">
+      <label><span data-i18n="username">Tài khoản</span><input type="text" name="username" required /></label>
+      <label><span data-i18n="password">Mật khẩu</span><input type="password" name="password" required /></label>
+      <label><span data-i18n="phone">Số điện thoại</span><input type="text" name="phone" required /></label>
+      <label><span data-i18n="otp">Mã xác thực</span>
+        <div class="otp-row">
+          <input type="text" name="otp" id="otp-input" required />
+          <button class="btn ghost" type="button" id="otp-btn" data-i18n="send_code">Gửi mã</button>
+        </div>
+      </label>
+      <small class="note" data-i18n="otp_note">Mã OTP là dạng demo (6 chữ số).</small>
+      <button class="btn primary" type="submit" data-i18n="register">Đăng ký</button>
+    </form>
+    <p><span data-i18n="have_account">Đã có tài khoản?</span> <a href="{{ url_for('login') }}" data-i18n="login">Đăng nhập</a></p>
+  </div>
+</section>
+{% endblock %}

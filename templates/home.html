@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-carousel">
+    {% if config.hero_images %}
+      {% for image in config.hero_images %}
+        <div class="hero-slide" style="background-image: url('{{ image }}')"></div>
+      {% endfor %}
+    {% else %}
+      <div class="hero-slide gradient"></div>
+      <div class="hero-slide gradient alt"></div>
+    {% endif %}
+  </div>
+  <div class="hero-overlay">
+    <h2 data-i18n="hero_title">Marina Bay Sands</h2>
+    <p data-i18n="hero_subtitle">Trải nghiệm casino đẳng cấp.</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="{{ url_for('casino') }}" data-i18n="hero_explore">Khám phá Casino</a>
+      <a class="btn ghost" href="{{ url_for('lottery') }}" data-i18n="hero_lottery">Vào Xổ Số</a>
+    </div>
+  </div>
+</section>
+
+<section class="quick-actions spaced">
+  <a class="quick-card primary" href="{{ url_for('cskh') }}" data-i18n="quick_deposit">Nạp tiền</a>
+  <a class="quick-card accent" href="{{ url_for('mine') }}#withdraw" data-i18n="quick_withdraw">Rút số dư</a>
+  <a class="quick-card" href="{{ url_for('records', record_type='bet') }}" data-i18n="quick_bet_history">Lịch sử cược</a>
+  <a class="quick-card outline" href="{{ url_for('cskh') }}" data-i18n="quick_online_service">Dịch vụ trực tuyến</a>
+</section>
+
+<section class="game-grid">
+  <div class="section-title">
+    <h3 data-i18n="featured_games">Trò chơi nổi bật</h3>
+    <span data-i18n="games_per_row">3 trò / hàng</span>
+  </div>
+  <div class="grid">
+    {% for game in games %}
+      <a class="game-card" href="{{ url_for('game_detail', slug=game.slug) }}">
+        <div class="game-logo">
+          {% if config.game_images.get(game.slug) %}
+            <img src="{{ config.game_images.get(game.slug) }}" alt="{{ game.name }}" />
+          {% else %}
+            <div class="logo-badge">{{ game.name[:2] }}</div>
+          {% endif %}
+        </div>
+        <div class="game-info">
+          <h4>{{ game.name }}</h4>
+          <span data-i18n="odds_label" data-i18n-args='{"low":"{{ config.odds_low }}","high":"{{ config.odds_high }}"}'>Odds {{ config.odds_low }} / {{ config.odds_high }}</span>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="marquee">
+  <div class="marquee-track">
+    {% for line in config.marquee %}
+      <span>{{ line }}</span>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

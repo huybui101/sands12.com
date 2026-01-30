@@ -1,0 +1,55 @@
+{
+  "ee99a16298": {
+    "id": "ee99a16298",
+    "username": "huybui101",
+    "password": "huybui1089",
+    "phone": "0367644930",
+    "avatar": "",
+    "created_at": "2026-01-26 07:26",
+    "balance": 0.02,
+    "income": 0.0,
+    "profit": 0.0,
+    "loss": 2000.0,
+    "status": "locked"
+  },
+  "a65e5fac28": {
+    "id": "a65e5fac28",
+    "username": "Admin",
+    "password": "123",
+    "phone": "0367644930",
+    "avatar": "",
+    "created_at": "2026-01-27 14:57",
+    "balance": 2000.0,
+    "income": 0.0,
+    "profit": 0.0,
+    "loss": 0.0,
+    "status": "active"
+  },
+  "5ad396ee14": {
+    "id": "5ad396ee14",
+    "username": "huybuikiki01@gmail.com",
+    "password": "Huybui1089",
+    "phone": "0367644930",
+    "avatar": "/uploads/avatar-5ad396ee14-66a1bf6a02384daaa9a8f79d6d45be5a.png",
+    "created_at": "2026-01-27 15:12",
+    "balance": 404886450.32,
+    "income": 860935022.9,
+    "profit": 155250577.9,
+    "loss": 2000.0,
+    "status": "active"
+  },
+  "fd08309c96": {
+    "id": "fd08309c96",
+    "username": "Admin123",
+    "password": "Admin123123",
+    "phone": "0367644930",
+    "avatar": "",
+    "created_at": "2026-01-27 18:00",
+    "balance": 0.0,
+    "income": 0.0,
+    "profit": 0.0,
+    "loss": 2000.0,
+    "status": "active",
+    "withdraw_password": ""
+  }
+}
