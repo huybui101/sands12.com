@@ -310,7 +310,7 @@
       </section>
 
       <section class="admin-placeholder admin-block" id="section-approval" data-section="section-approval">
-    <h3>Nạp tiền nhanh theo ID</h3>
+    <h3>Nạp tiền tài khoản</h3>
     <form class="inline-form" method="post" action="{{ url_for('admin_add_transaction') }}">
       <input type="hidden" name="tx_type" value="deposit" />
       <input type="hidden" name="tx_instant" value="1" />
@@ -333,14 +333,9 @@
       <button class="btn primary" type="submit">Nạp tiền ngay</button>
     </form>
 
-    <h3 data-i18n="admin_approval">Duyệt nạp/rút</h3>
+    <h3>Tạo yêu cầu rút</h3>
     <form class="inline-form" method="post" action="{{ url_for('admin_add_transaction') }}">
-      <label><span data-i18n="admin_tx_type">Loại</span>
-        <select name="tx_type">
-          <option value="deposit" data-i18n="deposit">Nạp</option>
-          <option value="withdraw" data-i18n="withdraw">Rút</option>
-        </select>
-      </label>
+      <input type="hidden" name="tx_type" value="withdraw" />
       <label><span>ID người chơi</span>
         <input type="text" name="tx_user_id" placeholder="ID người chơi" />
       </label>
@@ -353,7 +348,7 @@
         </select>
       </label>
       <label><span data-i18n="amount">Số tiền</span><input type="number" name="tx_amount" min="1" step="0.01" /></label>
-      <button class="btn primary" type="submit" data-i18n="admin_create_request">Tạo yêu cầu</button>
+      <button class="btn primary" type="submit">Tạo yêu cầu rút</button>
     </form>
     <div class="admin-table">
       <div class="table-row header six">
