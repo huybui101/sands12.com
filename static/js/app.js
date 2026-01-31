@@ -121,7 +121,7 @@ if (marquee) {
         trackWidth = track.scrollWidth;
       }
 
-      const speed = 60; // px per second
+      const speed = 30; // px per second
       const duration = Math.max(12, trackWidth / speed);
       track.style.setProperty('--marquee-duration', `${duration}s`);
     };
