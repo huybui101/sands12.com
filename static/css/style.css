@@ -239,6 +239,7 @@ p, span, label, input, button, select, textarea {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  touch-action: pan-x;
 }
 
 .hero-carousel::-webkit-scrollbar {
@@ -277,6 +278,13 @@ p, span, label, input, button, select, textarea {
   gap: 12px;
   padding: 32px;
   background: linear-gradient(120deg, rgba(11, 15, 30, 0.82), rgba(11, 15, 30, 0.08));
+  pointer-events: none;
+}
+
+.hero-overlay .hero-actions,
+.hero-overlay .btn,
+.hero-overlay a {
+  pointer-events: auto;
 }
 
 .hero-overlay h2 {
