@@ -1808,6 +1808,11 @@ let currentBalance = Number(betAmountBox?.getAttribute('data-balance') || 0);
 let isBetLocked = false;
 let placedBetAmount = 0;
 let currentBetId = null;
+let currentBetRoundIndex = null;
+let isSettlingBet = false;
+let settleRetryTimer = null;
+let pendingOutcomeName = null;
+let pendingOutcomeOdds = null;
 const currentBetKey = 'currentBetInfo';
 
 const loadCurrentBetInfo = () => {
@@ -1889,6 +1894,7 @@ const storedBet = loadCurrentBetInfo();
 if (storedBet && storedBet.id) {
   currentBetId = storedBet.id;
   placedBetAmount = Number(storedBet.amount || 0);
+  currentBetRoundIndex = Number.isFinite(storedBet.roundIndex) ? storedBet.roundIndex : null;
   isBetLocked = true;
 }
 
@@ -2038,8 +2044,9 @@ if (betSubmit && betAmountInput) {
     currentBetId = data.bet_id;
     currentBalance = Number(data.balance || currentBalance);
     placedBetAmount = amount;
+    currentBetRoundIndex = roundIndex;
     isBetLocked = true;
-    saveCurrentBetInfo({ id: currentBetId, amount });
+    saveCurrentBetInfo({ id: currentBetId, amount, roundIndex });
     updateBalanceDisplay();
     updateBetState();
     if (resultText) {
@@ -2062,6 +2069,39 @@ const roundCountEl = document.getElementById('round-count');
 if (countdownEl && resultText) {
   let lastRoundIndex = null;
 
+  const resetBetState = () => {
+    isBetLocked = false;
+    placedBetAmount = 0;
+    currentBetId = null;
+    currentBetRoundIndex = null;
+    pendingOutcomeName = null;
+    pendingOutcomeOdds = null;
+    saveCurrentBetInfo(null);
+    const countEl = document.getElementById('selected-count');
+    if (countEl) countEl.textContent = '0';
+    const options = document.querySelectorAll('.bet-option');
+    options.forEach((opt) => opt.classList.remove('active', 'locked'));
+    amountChips.forEach((chip) => {
+      chip.classList.remove('active');
+      chip.removeAttribute('disabled');
+    });
+    if (betAmountInput) {
+      betAmountInput.value = '';
+      betAmountInput.removeAttribute('disabled');
+    }
+    updateBetState();
+    updateCountdownDisplay();
+  };
+
+  const scheduleSettleRetry = () => {
+    if (settleRetryTimer) clearTimeout(settleRetryTimer);
+    settleRetryTimer = setTimeout(() => {
+      if (currentBetId && !isSettlingBet) {
+        resolveRound();
+      }
+    }, 3000);
+  };
+
   const updateRoundCount = () => {
     if (roundCountEl) {
       const nextRound = Math.floor(100 + Math.random() * 900);
@@ -2082,11 +2122,14 @@ if (countdownEl && resultText) {
     updateRoundCount();
     const options = Array.from(document.querySelectorAll('.bet-option'));
     if (!options.length) return;
-    const selected = Array.from(document.querySelectorAll('.bet-option.active'));
     const outcome = options[Math.floor(Math.random() * options.length)];
-    const outcomeName = getOptionLabel(outcome) || outcome.textContent.trim().split('\n')[0];
-    const odds = outcome.getAttribute('data-odds') || '-';
+    const outcomeName = pendingOutcomeName || getOptionLabel(outcome) || outcome.textContent.trim().split('\n')[0];
+    const odds = pendingOutcomeOdds || outcome.getAttribute('data-odds') || '-';
     if (currentBetId) {
+      if (isSettlingBet) return;
+      pendingOutcomeName = outcomeName;
+      pendingOutcomeOdds = odds;
+      isSettlingBet = true;
       fetch('/api/bet/settle', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -2116,39 +2159,37 @@ if (countdownEl && resultText) {
                           `Kết quả: ${outcomeName} (odds ${odds}) - ${netLabel}`
                         );
             }
-            saveCurrentBetInfo(null);
+            resetBetState();
           } else {
             resultText.textContent = `Kết quả: ${outcomeName} (odds ${odds})`;
+            scheduleSettleRetry();
           }
+        })
+        .catch(() => {
+          resultText.textContent = `Kết quả: ${outcomeName} (odds ${odds})`;
+          scheduleSettleRetry();
+        })
+        .finally(() => {
+          isSettlingBet = false;
         });
     } else {
       resultText.textContent = `Kết quả: ${outcomeName} (odds ${odds})`;
+      resetBetState();
     }
-
-    // Reset for next round
-    isBetLocked = false;
-    placedBetAmount = 0;
-    currentBetId = null;
-    saveCurrentBetInfo(null);
-    const countEl = document.getElementById('selected-count');
-    if (countEl) countEl.textContent = '0';
-    options.forEach((opt) => opt.classList.remove('active', 'locked'));
-    amountChips.forEach((chip) => {
-      chip.classList.remove('active');
-      chip.removeAttribute('disabled');
-    });
-    if (betAmountInput) {
-      betAmountInput.value = '';
-      betAmountInput.removeAttribute('disabled');
-    }
-    updateBetState();
-    updateCountdownDisplay();
   };
 
   const tick = () => {
     const vnNow = getVietnamNowMs();
     const roundIndex = Math.floor(vnNow / roundMs);
     updateCountdownDisplay();
+
+    if (
+      currentBetId &&
+      Number.isFinite(currentBetRoundIndex) &&
+      roundIndex > currentBetRoundIndex
+    ) {
+      resolveRound();
+    }
 
     if (lastRoundIndex === null) {
       lastRoundIndex = roundIndex;
