@@ -56,6 +56,7 @@
     "Vi B2 vừa thắng 720$ tại Phi Thuyền May Mắn",
     "Lạc C2 đang chơi Singapore PK 10 và lãi 650$"
   ],
+  "marquee_speed": 0.2,
   "odds_low": 1.98,
   "odds_high": 2.1,
   "game_images": {
@@ -66,7 +67,7 @@
   },
   "theme_primary": "#f5c542",
   "theme_accent": "#ffdf85",
-  "updated_at": "2026-01-27 16:36:58",
+  "updated_at": "2026-02-01 12:00:00",
   "banks_config": "",
   "bank_transfer_info": "",
   "fee_deposit": 0.0,
