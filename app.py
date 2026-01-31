@@ -1208,6 +1208,21 @@ def admin():
         if game_slug and request.form.get("clear_game_image"):
             config.setdefault("game_images", {}).pop(game_slug, None)
 
+        if section == "game" and request.form.get("update_game_names"):
+            games = load_games()
+            updated = 0
+            for game in games:
+                form_key = f"game_name_{game['slug']}"
+                new_name = (request.form.get(form_key) or "").strip()
+                if new_name and new_name != game.get("name"):
+                    game["name"] = new_name
+                    updated += 1
+            if updated:
+                save_games(games)
+                flash("Đã cập nhật tên trò chơi.", "success")
+            else:
+                flash("Không có thay đổi tên trò chơi.", "error")
+
         delete_game_slug = request.form.get("delete_game_slug")
         if delete_game_slug:
             config.setdefault("game_images", {}).pop(delete_game_slug, None)

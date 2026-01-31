@@ -117,6 +117,10 @@
           {% for game in games %}
             <div class="game-preview-card">
               <div class="preview-title">{{ game.name }}</div>
+              <label class="preview-edit">
+                <span>Sửa tên</span>
+                <input type="text" name="game_name_{{ game.slug }}" value="{{ game.name }}" />
+              </label>
               <div class="preview-image">
                 {% if config.game_images.get(game.slug) %}
                   <img src="{{ config.game_images.get(game.slug) }}" alt="{{ game.name }}" />
@@ -130,6 +134,7 @@
         </div>
         <div class="admin-actions">
           <button class="btn primary" type="submit" data-i18n="admin_update_game_logo">Cập nhật logo trò chơi</button>
+          <button class="btn ghost" type="submit" name="update_game_names" value="1">Lưu tên trò chơi</button>
         </div>
       </div>
       </form>
