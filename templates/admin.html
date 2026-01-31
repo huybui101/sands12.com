@@ -146,6 +146,12 @@
         <label><span data-i18n="admin_marquee_content">Nội dung hiển thị</span>
           <textarea name="marquee" rows="4">{{ config.marquee | join('\n') }}</textarea>
         </label>
+        <label><span data-i18n="admin_marquee_speed">Tốc độ chạy (px/giây)</span>
+          <div class="range-field">
+            <input type="range" name="marquee_speed" min="5" max="120" step="1" value="{{ config.marquee_speed if config.marquee_speed is defined else 30 }}" data-range-output="marquee-speed-value" />
+            <span id="marquee-speed-value" class="range-value">{{ config.marquee_speed if config.marquee_speed is defined else 30 }}</span>
+          </div>
+        </label>
         <div class="admin-actions">
           <button class="btn primary" type="submit" data-i18n="admin_save_content">Lưu nội dung</button>
         </div>

@@ -1799,6 +1799,26 @@ input:focus, select:focus, textarea:focus {
   gap: 12px;
 }
 
+.range-field {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.range-field input[type="range"] {
+  width: 100%;
+}
+
+.range-value {
+  min-width: 36px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  text-align: center;
+  font-weight: 600;
+}
+
 .admin-section h3 {
   margin: 0;
   font-size: 16px;

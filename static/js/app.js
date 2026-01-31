@@ -17,6 +17,18 @@ closeButtons.forEach((btn) => {
   });
 });
 
+const rangeInputs = document.querySelectorAll('[data-range-output]');
+rangeInputs.forEach((input) => {
+  const targetId = input.getAttribute('data-range-output');
+  const output = targetId ? document.getElementById(targetId) : null;
+  if (!output) return;
+  const update = () => {
+    output.textContent = input.value;
+  };
+  input.addEventListener('input', update);
+  update();
+});
+
 const floatingCskh = document.querySelector('.floating-cskh');
 if (floatingCskh) {
   let isDragging = false;
@@ -121,7 +133,7 @@ if (marquee) {
         trackWidth = track.scrollWidth;
       }
 
-      const speed = 30; // px per second
+      const speed = Math.max(5, parseFloat(marquee.dataset.speed || '30')); // px per second
       const duration = Math.max(12, trackWidth / speed);
       track.style.setProperty('--marquee-duration', `${duration}s`);
     };
@@ -323,6 +335,7 @@ if (langSelects.length) {
       admin_update_game_logo: 'Cập nhật logo trò chơi',
       admin_marquee: 'Dòng chạy lợi nhuận',
       admin_marquee_content: 'Nội dung hiển thị',
+      admin_marquee_speed: 'Tốc độ chạy (px/giây)',
       admin_save_content: 'Lưu nội dung',
       admin_cskh_config: 'Cấu hình CSKH',
       admin_cskh_logo: 'Logo CSKH',
@@ -597,6 +610,7 @@ if (langSelects.length) {
       admin_update_game_logo: 'Update game logo',
       admin_marquee: 'Profit ticker',
       admin_marquee_content: 'Display content',
+      admin_marquee_speed: 'Speed (px/sec)',
       admin_save_content: 'Save content',
       admin_cskh_config: 'Support config',
       admin_cskh_logo: 'Support logo',
