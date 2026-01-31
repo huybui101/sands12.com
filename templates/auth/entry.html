@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% set show_nav = false %}
+{% set show_header = false %}
+
+{% block content %}
+<section class="landing">
+  <div class="landing-hero">
+    <div class="landing-art">
+      <img src="{{ url_for('static', filename='images/landing-festive.svg') }}" alt="Lễ hội" />
+    </div>
+    <div class="landing-content">
+      <span class="landing-chip">Marina Bay Sands</span>
+      <h2 class="landing-title">ĐĂNG KÝ<br />ĐĂNG NHẬP</h2>
+      <p class="landing-subtitle">Khám phá và trải nghiệm cùng Marina Bay Sands</p>
+      <div class="landing-actions">
+        <a class="btn primary" href="{{ url_for('register') }}" data-i18n="register">Đăng ký</a>
+        <a class="btn ghost" href="{{ url_for('login') }}" data-i18n="login">Đăng nhập</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

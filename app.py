@@ -406,10 +406,18 @@ def uploads(filename):
 @app.route("/")
 def home():
     config = load_site_config()
+    user = current_user()
+    if not user:
+        return render_template(
+            "auth/entry.html",
+            user=None,
+            config=config,
+            telegram_link=TELEGRAM_CSKH,
+        )
     games = load_games()
     return render_template(
         "home.html",
-        user=current_user(),
+        user=user,
         config=config,
         games=games[:6],
         telegram_link=TELEGRAM_CSKH,

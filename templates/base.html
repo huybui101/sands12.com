@@ -9,31 +9,33 @@
 </head>
 <body style="--primary: {{ config.theme_primary if config else '#7d3cff' }}; --primary-2: {{ config.theme_accent if config else '#00d9ff' }};">
   <div class="app fade-in">
-    <header class="top-bar">
-      <div class="brand">
-        <div class="logo-wrap">
-          {% if config and config.logo %}
-            <img class="logo" src="{{ config.logo }}" alt="Logo" />
+    {% if show_header is not defined or show_header %}
+      <header class="top-bar">
+        <div class="brand">
+          <div class="logo-wrap">
+            {% if config and config.logo %}
+              <img class="logo" src="{{ config.logo }}" alt="Logo" />
+            {% else %}
+              <div class="logo placeholder">5D</div>
+            {% endif %}
+          </div>
+          <div class="brand-text">
+            <h1>{{ config.site_name if config else "Lucky 5D" }}</h1>
+          </div>
+        </div>
+        <div class="auth">
+          {% if is_admin and request.endpoint == 'admin' %}
+            <span class="user-pill">{{ admin_username }}</span>
+            <a class="btn ghost" href="{{ url_for('admin_logout') }}">Đăng xuất</a>
+          {% elif user %}
+            
           {% else %}
-            <div class="logo placeholder">5D</div>
+            <a class="btn ghost" href="{{ url_for('login') }}" data-i18n="login">Đăng nhập</a>
+            <a class="btn" href="{{ url_for('register') }}" data-i18n="register">Đăng ký</a>
           {% endif %}
         </div>
-        <div class="brand-text">
-          <h1>{{ config.site_name if config else "Lucky 5D" }}</h1>
-        </div>
-      </div>
-      <div class="auth">
-        {% if is_admin and request.endpoint == 'admin' %}
-          <span class="user-pill">{{ admin_username }}</span>
-          <a class="btn ghost" href="{{ url_for('admin_logout') }}">Đăng xuất</a>
-        {% elif user %}
-          
-        {% else %}
-          <a class="btn ghost" href="{{ url_for('login') }}" data-i18n="login">Đăng nhập</a>
-          <a class="btn" href="{{ url_for('register') }}" data-i18n="register">Đăng ký</a>
-        {% endif %}
-      </div>
-    </header>
+      </header>
+    {% endif %}
 
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
