@@ -99,6 +99,44 @@ if (floatingCskh) {
   });
 }
 
+const marquee = document.querySelector('.marquee');
+if (marquee) {
+  const track = marquee.querySelector('.marquee-track');
+  if (track) {
+    const buildMarquee = () => {
+      const containerWidth = marquee.offsetWidth;
+      const clones = track.querySelectorAll('[data-clone="true"]');
+      clones.forEach((node) => node.remove());
+
+      const items = Array.from(track.children);
+      if (!items.length) return;
+
+      let trackWidth = track.scrollWidth;
+      while (trackWidth < containerWidth * 2) {
+        items.forEach((item) => {
+          const clone = item.cloneNode(true);
+          clone.setAttribute('data-clone', 'true');
+          track.appendChild(clone);
+        });
+        trackWidth = track.scrollWidth;
+      }
+
+      const speed = 60; // px per second
+      const duration = Math.max(12, trackWidth / speed);
+      track.style.setProperty('--marquee-duration', `${duration}s`);
+    };
+
+    let resizeTimer = null;
+    const onResize = () => {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(buildMarquee, 200);
+    };
+
+    buildMarquee();
+    window.addEventListener('resize', onResize);
+  }
+}
+
 document.addEventListener('click', (event) => {
   const otpBtn = event.target.closest('#otp-btn');
   if (!otpBtn) return;

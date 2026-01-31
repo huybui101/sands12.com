@@ -274,9 +274,9 @@ p, span, label, input, button, select, textarea {
   position: absolute;
   inset: 0;
   display: grid;
-  align-content: center;
-  gap: 12px;
-  padding: 32px;
+  align-content: flex-start;
+  gap: 6px;
+  padding: 18px 22px 24px;
   background: linear-gradient(120deg, rgba(11, 15, 30, 0.82), rgba(11, 15, 30, 0.08));
   pointer-events: none;
 }
@@ -288,13 +288,13 @@ p, span, label, input, button, select, textarea {
 }
 
 .hero-overlay h2 {
-  font-size: 28px;
+  font-size: 22px;
   margin: 0;
 }
 
 .hero-overlay p {
   color: var(--muted);
-  max-width: 520px;
+  max-width: 420px;
   margin: 0;
 }
 
@@ -448,7 +448,10 @@ p, span, label, input, button, select, textarea {
   display: flex;
   gap: 32px;
   padding: 10px 20px;
-  animation: marquee 18s linear infinite;
+  min-width: 100%;
+  width: max-content;
+  will-change: transform;
+  animation: marquee var(--marquee-duration, 20s) linear infinite;
 }
 
 .marquee-track span {
