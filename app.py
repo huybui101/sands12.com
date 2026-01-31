@@ -1091,6 +1091,11 @@ def admin():
         if request.form.get("clear_heroes"):
             config["hero_images"] = []
 
+        delete_heroes = request.form.getlist("delete_heroes")
+        if delete_heroes:
+            current_heroes = config.get("hero_images", [])
+            config["hero_images"] = [img for img in current_heroes if img not in delete_heroes]
+
         marquee_text = request.form.get("marquee")
         if marquee_text:
             config["marquee"] = [line.strip() for line in marquee_text.split("\n") if line.strip()]
@@ -1168,7 +1173,8 @@ def admin():
                 hero.save(hero_path)
                 new_heroes.append(f"/uploads/{filename}")
             if new_heroes:
-                config["hero_images"] = new_heroes
+                current_heroes = config.get("hero_images", [])
+                config["hero_images"] = current_heroes + new_heroes
                 flash("Đã cập nhật ảnh quảng cáo.", "success")
 
         game_slug = request.form.get("game_slug")

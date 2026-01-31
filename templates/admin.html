@@ -72,7 +72,10 @@
         {% if config.hero_images %}
           <div class="preview-grid">
             {% for hero in config.hero_images %}
-              <img src="{{ hero }}" alt="Hero" />
+              <label class="preview-item">
+                <img src="{{ hero }}" alt="Hero" />
+                <span><input type="checkbox" name="delete_heroes" value="{{ hero }}" /> Xóa ảnh này</span>
+              </label>
             {% endfor %}
           </div>
           <label><input type="checkbox" name="clear_heroes" /> <span data-i18n="admin_clear_heroes">Xóa tất cả hero</span></label>
