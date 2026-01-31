@@ -133,7 +133,7 @@ if (marquee) {
         trackWidth = track.scrollWidth;
       }
 
-      const speed = Math.min(25, Math.max(5, parseFloat(marquee.dataset.speed || '20'))); // px per second
+      const speed = Math.min(15, Math.max(5, parseFloat(marquee.dataset.speed || '12'))); // px per second
       const duration = Math.max(12, trackWidth / speed);
       track.style.setProperty('--marquee-duration', `${duration}s`);
     };
