@@ -1223,6 +1223,7 @@ def admin_add_transaction():
     user_id = (request.form.get("tx_user_id") or "").strip()
     username = (request.form.get("tx_username") or "").strip()
     amount_raw = request.form.get("tx_amount") or "0"
+    instant = request.form.get("tx_instant") == "1"
     try:
         amount = float(amount_raw)
     except ValueError:
@@ -1247,7 +1248,12 @@ def admin_add_transaction():
     net_amount = amount
     status = "pending"
     if tx_type == "deposit":
-        pass
+        if instant:
+            fee = round(float(amount) * float(config.get("fee_deposit", 0)) / 100, 2)
+            net_amount = round(float(amount) - fee, 2)
+            user["balance"] = round(float(user.get("balance", 0)) + net_amount, 2)
+            user["income"] = round(float(user.get("income", 0)) + net_amount, 2)
+            status = "approved"
     elif tx_type == "withdraw":
         if float(user.get("balance", 0)) < float(amount):
             flash("Số dư không đủ để rút.", "error")
@@ -1269,7 +1275,7 @@ def admin_add_transaction():
             "note": "",
             "status": status,
             "created_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
-            "updated_at": "",
+            "updated_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S") if status == "approved" else "",
             "reserved": True if tx_type == "withdraw" else False,
         }
     )
