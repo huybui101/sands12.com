@@ -311,6 +311,17 @@ def is_same_pair(selections):
     return any(normalized == group for group in PAIR_GROUPS)
 
 
+def get_pair_options(selections):
+    if len(selections) != 2:
+        return []
+    normalized = {normalize_label(item) for item in selections}
+    for group in PAIR_GROUPS:
+        if normalized == group:
+            lookup = {normalize_label(item): item for item in selections}
+            return [lookup.get(label, label) for label in group]
+    return []
+
+
 def settle_pending_bets(user):
     if not user:
         return
@@ -335,8 +346,17 @@ def settle_pending_bets(user):
         base_amount = float(bet.get("amount", 0))
         odds = float(bet.get("odds", 1))
 
-        if is_same_pair(selections):
-            outcome = selections[bet_round % 2] if len(selections) == 2 else (selections[0] if selections else "")
+        pair_options = bet.get("pair_options") or []
+        if pair_options:
+            outcome = pair_options[bet_round % 2]
+            normalized_outcome = normalize_label(outcome)
+            normalized_selections = {normalize_label(item) for item in selections}
+            is_win = normalized_outcome in normalized_selections
+        else:
+            outcome = "Hệ thống"
+            is_win = False
+
+        if is_win:
             payout = round(base_amount * odds, 2)
             net = round(payout - total_stake, 2)
             bet["status"] = "win"
@@ -348,7 +368,7 @@ def settle_pending_bets(user):
             user["profit"] = round(float(user.get("profit", 0)) + net, 2)
         else:
             bet["status"] = "lose"
-            bet["outcome"] = "Hệ thống"
+            bet["outcome"] = outcome
             bet["payout"] = 0
             bet["settled_at"] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
             user["loss"] = round(float(user.get("loss", 0)) + total_stake, 2)
@@ -732,28 +752,37 @@ def api_bet_place():
     save_users(USERS)
 
     bets = load_bets()
-    bet_id = uuid.uuid4().hex[:10]
-    bets.append(
-        {
-            "id": bet_id,
-            "user_id": user.get("id"),
-            "username": user.get("username"),
-            "game_slug": game_slug,
-            "round": round_id,
-            "selections": selections,
-            "selection_count": selection_count,
-            "amount": amount,
-            "total_stake": total_stake,
-            "odds": odds,
-            "status": "pending",
-            "outcome": "",
-            "payout": 0,
-            "created_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
-            "settled_at": "",
-        }
-    )
+    bet_ids = []
+    pair_id = uuid.uuid4().hex[:8] if selection_count == 2 else ""
+    pair_options = get_pair_options(selections) if selection_count == 2 else []
+
+    for selection in selections:
+        bet_id = uuid.uuid4().hex[:10]
+        bet_ids.append(bet_id)
+        bets.append(
+            {
+                "id": bet_id,
+                "user_id": user.get("id"),
+                "username": user.get("username"),
+                "game_slug": game_slug,
+                "round": round_id,
+                "selections": [selection],
+                "selection_count": 1,
+                "amount": amount,
+                "total_stake": amount,
+                "odds": odds,
+                "status": "pending",
+                "outcome": "",
+                "payout": 0,
+                "pair_id": pair_id,
+                "pair_options": pair_options,
+                "created_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
+                "settled_at": "",
+            }
+        )
+
     save_bets(bets)
-    return jsonify({"ok": True, "bet_id": bet_id, "balance": user.get("balance")})
+    return jsonify({"ok": True, "bet_ids": bet_ids, "balance": user.get("balance")})
 
 
 @app.route("/api/bet/settle", methods=["POST"])

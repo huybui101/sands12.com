@@ -1807,7 +1807,7 @@ const getOptionLabel = (button) => {
 let currentBalance = Number(betAmountBox?.getAttribute('data-balance') || 0);
 let isBetLocked = false;
 let placedBetAmount = 0;
-let currentBetId = null;
+let currentBetIds = [];
 let currentBetRoundIndex = null;
 let isSettlingBet = false;
 let settleRetryTimer = null;
@@ -1909,12 +1909,16 @@ const updateBetSummary = () => {
 };
 const storedBet = loadCurrentBetInfo();
 if (storedBet && storedBet.id) {
-  currentBetId = storedBet.id;
+  currentBetIds = Array.isArray(storedBet.ids)
+    ? storedBet.ids
+    : storedBet.id
+      ? [storedBet.id]
+      : [];
   placedBetAmount = Number(storedBet.amount || 0);
   currentBetRoundIndex = Number.isFinite(storedBet.roundIndex) ? storedBet.roundIndex : null;
   const currentRoundIndex = Math.floor(getVietnamNowMs() / roundMs);
   if (currentBetRoundIndex === null || currentRoundIndex - currentBetRoundIndex > 2) {
-    currentBetId = null;
+    currentBetIds = [];
     placedBetAmount = 0;
     currentBetRoundIndex = null;
     isBetLocked = false;
@@ -2067,12 +2071,17 @@ if (betSubmit && betAmountInput) {
       }
       return;
     }
-    currentBetId = data.bet_id;
+    const betIds = Array.isArray(data.bet_ids)
+      ? data.bet_ids
+      : data.bet_id
+        ? [data.bet_id]
+        : [];
+    currentBetIds = betIds;
     currentBalance = Number(data.balance || currentBalance);
     placedBetAmount = amount;
     currentBetRoundIndex = roundIndex;
     isBetLocked = true;
-    saveCurrentBetInfo({ id: currentBetId, amount, roundIndex, selections });
+    saveCurrentBetInfo({ ids: currentBetIds, amount, roundIndex, selections });
     updateBalanceDisplay();
     updateBetState();
     if (resultText) {
@@ -2098,7 +2107,7 @@ if (countdownEl && resultText) {
   const resetBetState = () => {
     isBetLocked = false;
     placedBetAmount = 0;
-    currentBetId = null;
+    currentBetIds = [];
     currentBetRoundIndex = null;
     pendingOutcomeName = null;
     pendingOutcomeOdds = null;
@@ -2135,53 +2144,49 @@ if (countdownEl && resultText) {
   const scheduleSettleRetry = () => {
     if (settleRetryTimer) clearTimeout(settleRetryTimer);
     settleRetryTimer = setTimeout(() => {
-      if (currentBetId && !isSettlingBet) {
+      if (currentBetIds.length && !isSettlingBet) {
         resolveRound();
       }
-    }, 3000);
+    if (currentBetIds.length) {
   };
 
   const updateRoundCount = () => {
     if (roundCountEl) {
-      const nextRound = Math.floor(100 + Math.random() * 900);
-      roundCountEl.textContent = String(nextRound);
-    }
-  };
+      const settleOne = (betId) => fetch('/api/bet/settle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bet_id: betId, outcome: outcomeName }),
+      })
+        .then((response) => response.json().then((data) => ({ ok: response.ok, data })));
 
-  const updateCountdownDisplay = () => {
-    const vnNow = getVietnamNowMs();
-    const elapsedInRound = Math.floor((vnNow % roundMs) / 1000);
-    const remaining = 600 - elapsedInRound;
-    const minutes = String(Math.floor(remaining / 60)).padStart(2, '0');
-    const seconds = String(remaining % 60).padStart(2, '0');
-    countdownEl.textContent = `${minutes}:${seconds}`;
-  };
-
-  const resolveRound = () => {
-    updateRoundCount();
-    const options = Array.from(document.querySelectorAll('.bet-option'));
-    if (!options.length) return;
-    const betInfo = loadCurrentBetInfo();
-    const activeOptions = Array.from(document.querySelectorAll('.bet-option.active'));
-    const pickOptionsByLabels = (labels) => {
-      if (!Array.isArray(labels) || !labels.length) return [];
-      const labelSet = new Set(labels.map((label) => String(label || '').trim()));
-      return options.filter((opt) => labelSet.has(getOptionLabel(opt)));
-    };
-    let candidateOptions = activeOptions;
-    if (!candidateOptions.length && betInfo?.selections?.length) {
-      candidateOptions = pickOptionsByLabels(betInfo.selections);
-    }
-    let outcomePool = options;
-    if (candidateOptions.length === 2) {
-      const pairA = candidateOptions[0].closest('.bet-pair');
-      const pairB = candidateOptions[1].closest('.bet-pair');
-      if (pairA && pairA === pairB) {
-        outcomePool = candidateOptions;
-      }
-    }
-    const outcome = outcomePool[Math.floor(Math.random() * outcomePool.length)];
-    const outcomeName = pendingOutcomeName || getOptionLabel(outcome) || outcome.textContent.trim().split('\n')[0];
+      Promise.all(currentBetIds.map((id) => settleOne(id)))
+        .then((results) => {
+          const successful = results.filter((item) => item.data && item.data.ok);
+          if (successful.length) {
+            const last = successful[successful.length - 1].data;
+            currentBalance = Number(last.balance || currentBalance);
+            updateBalanceDisplay();
+            const totalNet = successful.reduce((sum, item) => sum + Number(item.data.net || 0), 0);
+            const netLabel = totalNet >= 0
+              ? t('bet_net_win', { amount: formatMoney(totalNet) }, `Lãi +${formatMoney(totalNet)}$`)
+              : t('bet_net_lose', { amount: formatMoney(Math.abs(totalNet)) }, `Lỗ -${formatMoney(Math.abs(totalNet))}$`);
+            resultText.textContent = t(
+              'bet_result_template',
+              { outcome: outcomeName, odds, net: netLabel },
+              `Kết quả: ${outcomeName} (odds ${odds}) - ${netLabel}`
+            );
+            resetBetState();
+          } else {
+            const first = results[0];
+            const message = first?.data?.message || '';
+            resultText.textContent = `Kết quả: ${outcomeName} (odds ${odds})`;
+            if (!first?.ok || isInvalidBetMessage(message)) {
+              resetBetState();
+            } else {
+              scheduleSettleRetry();
+            }
+          }
+        })
     const odds = pendingOutcomeOdds || outcome.getAttribute('data-odds') || '-';
     if (currentBetId) {
       if (isSettlingBet) return;
