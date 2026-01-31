@@ -275,8 +275,9 @@ p, span, label, input, button, select, textarea {
   inset: 0;
   display: grid;
   align-content: flex-start;
+  justify-items: flex-start;
   gap: 6px;
-  padding: 18px 22px 24px;
+  padding: 16px 18px;
   background: linear-gradient(120deg, rgba(11, 15, 30, 0.82), rgba(11, 15, 30, 0.08));
   pointer-events: none;
 }
@@ -288,20 +289,26 @@ p, span, label, input, button, select, textarea {
 }
 
 .hero-overlay h2 {
-  font-size: 22px;
-  margin: 0;
+  font-size: 20px;
+  margin: 0 0 2px;
 }
 
 .hero-overlay p {
   color: var(--muted);
   max-width: 420px;
-  margin: 0;
+  margin: 0 0 6px;
 }
 
 .hero-actions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
+}
+
+.hero-actions .btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  border-radius: 999px;
 }
 
 .quick-actions {
