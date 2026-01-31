@@ -288,6 +288,29 @@ def get_current_round_index():
     return int(vn_now // round_ms)
 
 
+def normalize_label(value):
+    return " ".join(str(value).split()).strip().lower()
+
+
+PAIR_GROUPS = [
+    {"lớn", "nhỏ"},
+    {"lớn to", "nhỏ bé"},
+    {"sổ xố to", "sổ xố nhỏ"},
+    {"con to", "con nhỏ"},
+    {"nóng", "lạnh"},
+    {"tuyệt 13 cực nổ", "báo 60"},
+    {"làn sóng đỏ", "làn sóng xanh"},
+    {"làn sóng tím", "làn sóng vàng"},
+]
+
+
+def is_same_pair(selections):
+    if len(selections) != 2:
+        return False
+    normalized = {normalize_label(item) for item in selections}
+    return any(normalized == group for group in PAIR_GROUPS)
+
+
 def settle_pending_bets(user):
     if not user:
         return
@@ -307,12 +330,28 @@ def settle_pending_bets(user):
         if bet_round is None or bet_round >= current_round:
             continue
 
+        selections = bet.get("selections") or []
         total_stake = float(bet.get("total_stake", bet.get("amount", 0) or 0))
-        bet["status"] = "lose"
-        bet["outcome"] = "Hệ thống"
-        bet["payout"] = 0
-        bet["settled_at"] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        user["loss"] = round(float(user.get("loss", 0)) + total_stake, 2)
+        base_amount = float(bet.get("amount", 0))
+        odds = float(bet.get("odds", 1))
+
+        if is_same_pair(selections):
+            outcome = selections[bet_round % 2] if len(selections) == 2 else (selections[0] if selections else "")
+            payout = round(base_amount * odds, 2)
+            net = round(payout - total_stake, 2)
+            bet["status"] = "win"
+            bet["outcome"] = outcome
+            bet["payout"] = payout
+            bet["settled_at"] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            user["balance"] = round(float(user.get("balance", 0)) + payout, 2)
+            user["income"] = round(float(user.get("income", 0)) + payout, 2)
+            user["profit"] = round(float(user.get("profit", 0)) + net, 2)
+        else:
+            bet["status"] = "lose"
+            bet["outcome"] = "Hệ thống"
+            bet["payout"] = 0
+            bet["settled_at"] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            user["loss"] = round(float(user.get("loss", 0)) + total_stake, 2)
         updated = True
 
     if updated:
@@ -511,7 +550,7 @@ def records(record_type):
                 },
                 {
                     "label": "Ngày tạo",
-                    "value": user.get("created_at"),
+                    "value": user.t("created_at"),
                 },
             ]
         elif record_type == "created":
@@ -655,7 +694,7 @@ def api_bet_place():
     payload = request.get_json(silent=True) or {}
     selections = payload.get("selections") or []
     game_slug = (payload.get("game_slug") or "").strip()
-    round_id = payload.get("round")
+    round_id = get_current_round_index()
     odds_raw = payload.get("odds")
     try:
         amount = float(payload.get("amount") or 0)
@@ -676,6 +715,8 @@ def api_bet_place():
         return jsonify({"ok": False, "message": "Vui lòng chọn ít nhất 1 cửa."}), 400
     if selection_count > 2:
         return jsonify({"ok": False, "message": "Chỉ được chọn tối đa 2 cửa."}), 400
+    if selection_count == 2 and not is_same_pair(selections):
+        return jsonify({"ok": False, "message": "Chỉ được chọn 2 cửa cùng cặp đối nhau."}), 400
 
     config = load_site_config()
     user_odds = get_user_odds(user, game_slug, config)
@@ -736,12 +777,17 @@ def api_bet_settle():
     if bet.get("status") != "pending":
         return jsonify({"ok": False, "message": "Cược đã kết thúc."}), 400
 
-    def _normalize_label(value):
-        return " ".join(str(value).split()).strip().lower()
-
     selections = bet.get("selections") or []
-    normalized_outcome = _normalize_label(outcome)
-    normalized_selections = {_normalize_label(item) for item in selections}
+    normalized_outcome = normalize_label(outcome)
+    normalized_selections = {normalize_label(item) for item in selections}
+    if is_same_pair(selections) and normalized_outcome not in normalized_selections:
+        bet_round = bet.get("round")
+        try:
+            bet_round = int(bet_round)
+        except Exception:
+            bet_round = 0
+        outcome = selections[bet_round % 2] if len(selections) == 2 else (selections[0] if selections else outcome)
+        normalized_outcome = normalize_label(outcome)
     is_win = normalized_outcome in normalized_selections
     base_amount = float(bet.get("amount", 0))
     total_stake = float(bet.get("total_stake", bet.get("amount", 0)))
