@@ -1895,7 +1895,16 @@ if (storedBet && storedBet.id) {
   currentBetId = storedBet.id;
   placedBetAmount = Number(storedBet.amount || 0);
   currentBetRoundIndex = Number.isFinite(storedBet.roundIndex) ? storedBet.roundIndex : null;
-  isBetLocked = true;
+  const currentRoundIndex = Math.floor(getVietnamNowMs() / roundMs);
+  if (currentBetRoundIndex === null || currentRoundIndex - currentBetRoundIndex > 2) {
+    currentBetId = null;
+    placedBetAmount = 0;
+    currentBetRoundIndex = null;
+    isBetLocked = false;
+    saveCurrentBetInfo(null);
+  } else {
+    isBetLocked = true;
+  }
 }
 
 const getActiveChipPercent = () => {
