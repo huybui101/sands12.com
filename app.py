@@ -1273,6 +1273,7 @@ def admin():
         "admin.html",
         config=config,
         games=games,
+        banks=BANKS_VN,
         telegram_link=TELEGRAM_CSKH,
         chat_threads=chat_threads,
         users=users,
@@ -1411,6 +1412,54 @@ def admin_update_user_balance(user_id):
     user["balance"] = round(amount, 2)
     save_users(USERS)
     flash("Đã cập nhật số dư.", "success")
+    return redirect(url_for("admin"))
+
+
+@app.route("/admin/users/<user_id>/password", methods=["POST"])
+def admin_update_user_password(user_id):
+    guard = require_admin()
+    if guard:
+        return guard
+    user = USERS.get(user_id)
+    if not user:
+        flash("Không tìm thấy người dùng.", "error")
+        return redirect(url_for("admin"))
+    new_password = (request.form.get("new_password") or "").strip()
+    if len(new_password) < 4:
+        flash("Mật khẩu phải từ 4 ký tự.", "error")
+        return redirect(url_for("admin"))
+    user["password"] = new_password
+    save_users(USERS)
+    flash("Đã cập nhật mật khẩu.", "success")
+    return redirect(url_for("admin"))
+
+
+@app.route("/admin/users/<user_id>/bank", methods=["POST"])
+def admin_update_user_bank(user_id):
+    guard = require_admin()
+    if guard:
+        return guard
+    user = USERS.get(user_id)
+    if not user:
+        flash("Không tìm thấy người dùng.", "error")
+        return redirect(url_for("admin"))
+    bank_name = (request.form.get("bank_name") or "").strip()
+    account_number = (request.form.get("account_number") or "").strip()
+    full_name = (request.form.get("full_name") or "").strip()
+    phone = (request.form.get("phone") or "").strip()
+
+    if not (bank_name or account_number or full_name or phone):
+        flash("Vui lòng nhập thông tin ngân hàng.", "error")
+        return redirect(url_for("admin"))
+
+    user["bank"] = {
+        "full_name": full_name,
+        "phone": phone,
+        "bank_name": bank_name,
+        "account_number": account_number,
+    }
+    save_users(USERS)
+    flash("Đã cập nhật ngân hàng.", "success")
     return redirect(url_for("admin"))
 
 

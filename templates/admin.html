@@ -324,6 +324,22 @@
               <input class="mini-input" type="number" name="balance" min="0" step="0.01" data-i18n-placeholder="admin_balance_placeholder" placeholder="Số dư" />
               <button class="btn ghost small" type="submit" data-i18n="admin_update">Cập nhật</button>
             </form>
+            <form class="inline-actions stacked" method="post" action="{{ url_for('admin_update_user_password', user_id=user.id) }}">
+              <input class="mini-input wide" type="password" name="new_password" data-i18n-placeholder="admin_new_password" placeholder="Mật khẩu mới" />
+              <button class="btn ghost small" type="submit" data-i18n="admin_update_password">Đổi mật khẩu</button>
+            </form>
+            <form class="inline-actions stacked" method="post" action="{{ url_for('admin_update_user_bank', user_id=user.id) }}">
+              <select class="mini-input wide" name="bank_name">
+                <option value="" data-i18n="admin_bank_name">Chọn ngân hàng</option>
+                {% for bank in banks %}
+                  <option value="{{ bank }}" {{ 'selected' if user.bank and user.bank.bank_name == bank else '' }}>{{ bank }}</option>
+                {% endfor %}
+              </select>
+              <input class="mini-input wide" type="text" name="account_number" data-i18n-placeholder="admin_account_number" placeholder="Số tài khoản" value="{{ user.bank.account_number if user.bank is defined and user.bank }}" />
+              <input class="mini-input wide" type="text" name="full_name" data-i18n-placeholder="admin_account_holder" placeholder="Chủ tài khoản" value="{{ user.bank.full_name if user.bank is defined and user.bank }}" />
+              <input class="mini-input wide" type="text" name="phone" data-i18n-placeholder="admin_phone" placeholder="SĐT" value="{{ user.bank.phone if user.bank is defined and user.bank }}" />
+              <button class="btn ghost small" type="submit" data-i18n="admin_update_bank">Cập nhật NH</button>
+            </form>
           </span>
         </div>
       {% else %}

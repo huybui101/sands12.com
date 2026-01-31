@@ -1731,6 +1731,11 @@ input:focus, select:focus, textarea:focus {
   margin-right: 6px;
 }
 
+.inline-actions.stacked {
+  display: block;
+  margin: 6px 0 0;
+}
+
 .mini-input {
   width: 90px;
   padding: 6px 8px;
@@ -1739,6 +1744,10 @@ input:focus, select:focus, textarea:focus {
   border: 1px solid #e5e7eb;
   background: #ffffff;
   color: #111827;
+}
+
+.mini-input.wide {
+  width: 140px;
 }
 
 .admin-meta {
