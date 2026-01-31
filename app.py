@@ -1138,6 +1138,21 @@ def admin():
                 cskh_logo_file.save(logo_path)
                 config["cskh_logo"] = f"/uploads/{filename}"
 
+        if section == "edit_games":
+            games = load_games()
+            updated = 0
+            for game in games:
+                form_key = f"game_name_{game['slug']}"
+                new_name = (request.form.get(form_key) or "").strip()
+                if new_name and new_name != game.get("name"):
+                    game["name"] = new_name
+                    updated += 1
+            if updated:
+                save_games(games)
+                flash("Đã cập nhật tên trò chơi.", "success")
+            else:
+                flash("Không có thay đổi tên trò chơi.", "error")
+
         logo_file = request.files.get("logo")
         if logo_file and logo_file.filename:
             safe_name = secure_filename(logo_file.filename)

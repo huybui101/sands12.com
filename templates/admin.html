@@ -27,6 +27,7 @@
         <a class="menu-pill" href="#section-ads" data-section="section-ads" data-i18n="admin_menu_ads">LOGO & QUẢNG CÁO</a>
         <a class="menu-pill" href="#section-game-images" data-section="section-game-images" data-i18n="admin_menu_game_images">ẢNH TRÒ CHƠI</a>
         <a class="menu-pill" href="#section-add-game" data-section="section-add-game" data-i18n="admin_menu_add_game">THÊM TRÒ CHƠI</a>
+        <a class="menu-pill" href="#section-edit-game" data-section="section-edit-game">SỬA TÊN TRÒ CHƠI</a>
         <a class="menu-pill" href="#section-theme" data-section="section-theme" data-i18n="admin_menu_theme">THAY ĐỔI GIAO DIỆN</a>
         <a class="menu-pill" href="#section-tips" data-section="section-tips" data-i18n="admin_menu_tips">MẸO NHỎ</a>
         <a class="menu-pill" href="#section-config" data-section="section-config" data-i18n="admin_menu_config">CÀI CẤU HÌNH</a>
@@ -420,6 +421,22 @@
         </select>
       </label>
       <button class="btn primary" type="submit" data-i18n="admin_add">Thêm</button>
+    </form>
+      </section>
+
+      <section class="admin-placeholder admin-block" id="section-edit-game" data-section="section-edit-game">
+    <h3>Sửa tên trò chơi</h3>
+    <form method="post" action="{{ url_for('admin') }}">
+      <input type="hidden" name="section" value="edit_games" />
+      <div class="form-grid">
+        {% for game in games %}
+          <label>
+            <span>{{ game.slug }} ({{ game.category }})</span>
+            <input type="text" name="game_name_{{ game.slug }}" value="{{ game.name }}" />
+          </label>
+        {% endfor %}
+      </div>
+      <button class="btn primary" type="submit">Lưu tên trò chơi</button>
     </form>
       </section>
 
