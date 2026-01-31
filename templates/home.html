@@ -54,7 +54,7 @@
   </div>
 </section>
 
-<section class="marquee" data-speed="{{ config.marquee_speed if config.marquee_speed is defined else 30 }}">
+<section class="marquee" data-speed="{{ config.marquee_speed if config.marquee_speed is defined else 20 }}">
   <div class="marquee-track">
     {% for line in config.marquee %}
       <span>{{ line }}</span>

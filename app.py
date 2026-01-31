@@ -129,7 +129,7 @@ def default_site_config():
             "Trần B đang chơi Singapore PK 10 và lãi 1200$",
             "Lê C thắng 88$ tại Sổ Xố Đếm Ngược",
         ],
-        "marquee_speed": 30,
+        "marquee_speed": 20,
         "odds_low": 1.98,
         "odds_high": 2.1,
         "game_images": {},
@@ -1104,7 +1104,7 @@ def admin():
         marquee_speed_raw = request.form.get("marquee_speed")
         if marquee_speed_raw:
             try:
-                config["marquee_speed"] = max(5, float(marquee_speed_raw))
+                config["marquee_speed"] = max(5, min(25, float(marquee_speed_raw)))
             except ValueError:
                 pass
 
