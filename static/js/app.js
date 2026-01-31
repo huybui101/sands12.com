@@ -2226,6 +2226,7 @@ if (countdownEl && resultText) {
               { outcome: outcomeName, odds, net: netLabel },
               `Kết quả: ${outcomeName} (odds ${odds}) - ${netLabel}`
             );
+            showBetToast(`Kết quả: ${outcomeName} - ${netLabel}`, true);
             resetBetState();
           } else {
             const first = results[0];
