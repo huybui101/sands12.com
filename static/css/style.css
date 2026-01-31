@@ -253,6 +253,14 @@ p, span, label, input, button, select, textarea {
   scroll-snap-align: start;
 }
 
+.hero-image {
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  object-fit: cover;
+  display: block;
+}
+
 .hero-slide.gradient {
   background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
 }
