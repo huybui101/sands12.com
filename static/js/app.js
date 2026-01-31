@@ -2334,6 +2334,38 @@ if (adminMenu) {
   }
 }
 
+const approvalSection = document.getElementById('section-approval');
+if (approvalSection) {
+  const idInput = approvalSection.querySelector('input[name="tx_user_id"]');
+  const userSelect = approvalSection.querySelector('select[name="tx_username"]');
+
+  const findOptionById = (value) => {
+    if (!userSelect) return null;
+    const target = String(value || '').trim();
+    if (!target) return null;
+    return Array.from(userSelect.options).find(
+      (opt) => String(opt.getAttribute('data-user-id') || '').trim() === target
+    );
+  };
+
+  if (idInput && userSelect) {
+    idInput.addEventListener('input', () => {
+      const match = findOptionById(idInput.value);
+      if (match) {
+        userSelect.value = match.value;
+      } else if (!String(idInput.value || '').trim()) {
+        userSelect.value = '';
+      }
+    });
+
+    userSelect.addEventListener('change', () => {
+      const selected = userSelect.options[userSelect.selectedIndex];
+      const userId = selected?.getAttribute('data-user-id') || '';
+      if (idInput) idInput.value = userId;
+    });
+  }
+}
+
 const adminChat = document.querySelector('.admin-chat');
 if (adminChat) {
   const replyEndpoint = adminChat.getAttribute('data-reply-endpoint');

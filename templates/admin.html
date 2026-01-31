@@ -325,7 +325,7 @@
         <select name="tx_username">
           <option value="" data-i18n="admin_select_account">Chọn tài khoản</option>
           {% for user in users %}
-            <option value="{{ user.username }}">{{ user.username }} ({{ user.id }})</option>
+            <option value="{{ user.username }}" data-user-id="{{ user.id }}">{{ user.username }} ({{ user.id }})</option>
           {% endfor %}
         </select>
       </label>
