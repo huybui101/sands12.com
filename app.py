@@ -736,7 +736,13 @@ def api_bet_settle():
     if bet.get("status") != "pending":
         return jsonify({"ok": False, "message": "Cược đã kết thúc."}), 400
 
-    is_win = outcome in (bet.get("selections") or [])
+    def _normalize_label(value):
+        return " ".join(str(value).split()).strip().lower()
+
+    selections = bet.get("selections") or []
+    normalized_outcome = _normalize_label(outcome)
+    normalized_selections = {_normalize_label(item) for item in selections}
+    is_win = normalized_outcome in normalized_selections
     base_amount = float(bet.get("amount", 0))
     total_stake = float(bet.get("total_stake", bet.get("amount", 0)))
     odds = float(bet.get("odds", 1))

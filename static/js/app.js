@@ -2072,7 +2072,7 @@ if (betSubmit && betAmountInput) {
     placedBetAmount = amount;
     currentBetRoundIndex = roundIndex;
     isBetLocked = true;
-    saveCurrentBetInfo({ id: currentBetId, amount, roundIndex });
+    saveCurrentBetInfo({ id: currentBetId, amount, roundIndex, selections });
     updateBalanceDisplay();
     updateBetState();
     if (resultText) {
@@ -2161,7 +2161,26 @@ if (countdownEl && resultText) {
     updateRoundCount();
     const options = Array.from(document.querySelectorAll('.bet-option'));
     if (!options.length) return;
-    const outcome = options[Math.floor(Math.random() * options.length)];
+    const betInfo = loadCurrentBetInfo();
+    const activeOptions = Array.from(document.querySelectorAll('.bet-option.active'));
+    const pickOptionsByLabels = (labels) => {
+      if (!Array.isArray(labels) || !labels.length) return [];
+      const labelSet = new Set(labels.map((label) => String(label || '').trim()));
+      return options.filter((opt) => labelSet.has(getOptionLabel(opt)));
+    };
+    let candidateOptions = activeOptions;
+    if (!candidateOptions.length && betInfo?.selections?.length) {
+      candidateOptions = pickOptionsByLabels(betInfo.selections);
+    }
+    let outcomePool = options;
+    if (candidateOptions.length === 2) {
+      const pairA = candidateOptions[0].closest('.bet-pair');
+      const pairB = candidateOptions[1].closest('.bet-pair');
+      if (pairA && pairA === pairB) {
+        outcomePool = candidateOptions;
+      }
+    }
+    const outcome = outcomePool[Math.floor(Math.random() * outcomePool.length)];
     const outcomeName = pendingOutcomeName || getOptionLabel(outcome) || outcome.textContent.trim().split('\n')[0];
     const odds = pendingOutcomeOdds || outcome.getAttribute('data-odds') || '-';
     if (currentBetId) {
