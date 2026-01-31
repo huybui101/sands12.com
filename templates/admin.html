@@ -148,8 +148,8 @@
         </label>
         <label><span data-i18n="admin_marquee_speed">Tốc độ chạy (px/giây)</span>
           <div class="range-field">
-            <input type="range" name="marquee_speed" min="3" max="15" step="1" value="{{ config.marquee_speed if config.marquee_speed is defined else 8 }}" data-range-output="marquee-speed-value" />
-            <span id="marquee-speed-value" class="range-value">{{ config.marquee_speed if config.marquee_speed is defined else 8 }}</span>
+            <input type="range" name="marquee_speed" min="1" max="5" step="1" value="{{ config.marquee_speed if config.marquee_speed is defined else 1 }}" data-range-output="marquee-speed-value" />
+            <span id="marquee-speed-value" class="range-value">{{ config.marquee_speed if config.marquee_speed is defined else 1 }}</span>
           </div>
         </label>
         <div class="admin-actions">
