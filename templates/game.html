@@ -45,38 +45,12 @@
     <span data-i18n="system_label">Hệ thống</span>
   </div>
   <div class="bet-grid" data-max="2">
-    <div class="bet-pair">
-      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_big">Lớn</span> <span>{{ user_odds.odds_high }}</span></button>
-      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_small">Nhỏ</span> <span>{{ user_odds.odds_high }}</span></button>
-    </div>
-    <div class="bet-pair">
-      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_big_plus">Lớn to</span> <span>{{ user_odds.odds_high }}</span></button>
-      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_small_plus">Nhỏ bé</span> <span>{{ user_odds.odds_high }}</span></button>
-    </div>
-    <div class="bet-pair">
-      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_lottery_big">Sổ xố to</span> <span>{{ user_odds.odds_high }}</span></button>
-      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_lottery_small">Sổ xố nhỏ</span> <span>{{ user_odds.odds_high }}</span></button>
-    </div>
-    <div class="bet-pair">
-      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_animal_big">Con to</span> <span>{{ user_odds.odds_high }}</span></button>
-      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_animal_small">Con nhỏ</span> <span>{{ user_odds.odds_high }}</span></button>
-    </div>
-    <div class="bet-pair">
-      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_hot">Nóng</span> <span>{{ user_odds.odds_high }}</span></button>
-      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_cold">Lạnh</span> <span>{{ user_odds.odds_high }}</span></button>
-    </div>
-    <div class="bet-pair">
-      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_super13">Tuyệt 13 cực nổ</span> <span>{{ user_odds.odds_high }}</span></button>
-      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_bao60">Báo 60</span> <span>{{ user_odds.odds_high }}</span></button>
-    </div>
-    <div class="bet-pair">
-      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_wave_red">Làn sóng đỏ</span> <span>{{ user_odds.odds_high }}</span></button>
-      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_wave_blue">Làn sóng xanh</span> <span>{{ user_odds.odds_high }}</span></button>
-    </div>
-    <div class="bet-pair">
-      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_wave_purple">Làn sóng tím</span> <span>{{ user_odds.odds_high }}</span></button>
-      <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span data-i18n="bet_wave_yellow">Làn sóng vàng</span> <span>{{ user_odds.odds_high }}</span></button>
-    </div>
+    {% for pair in bet_pairs %}
+      <div class="bet-pair">
+        <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span>{{ pair.left }}</span> <span>{{ user_odds.odds_high }}</span></button>
+        <button class="bet-option" data-odds="{{ user_odds.odds_high }}"><span>{{ pair.right }}</span> <span>{{ user_odds.odds_high }}</span></button>
+      </div>
+    {% endfor %}
   </div>
 
   <div class="bet-footer">

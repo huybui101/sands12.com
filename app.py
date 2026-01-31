@@ -56,6 +56,17 @@ GAMES_DEFAULT = [
     {"name": "Số Xố Singapore", "slug": "so-xo-singapore", "category": "casino"},
 ]
 
+DEFAULT_BET_PAIRS = [
+    {"left": "Lớn", "right": "Nhỏ"},
+    {"left": "Lớn to", "right": "Nhỏ bé"},
+    {"left": "Sổ xố to", "right": "Sổ xố nhỏ"},
+    {"left": "Con to", "right": "Con nhỏ"},
+    {"left": "Nóng", "right": "Lạnh"},
+    {"left": "Tuyệt 13 cực nổ", "right": "Báo 60"},
+    {"left": "Làn sóng đỏ", "right": "Làn sóng xanh"},
+    {"left": "Làn sóng tím", "right": "Làn sóng vàng"},
+]
+
 BANKS_VN = [
     "Vietcombank",
     "VietinBank",
@@ -132,6 +143,7 @@ def default_site_config():
         "marquee_speed": 0.4,
         "odds_low": 1.98,
         "odds_high": 2.1,
+        "bet_pairs": DEFAULT_BET_PAIRS,
         "game_images": {},
         "theme_primary": "#7d3cff",
         "theme_accent": "#00d9ff",
@@ -294,33 +306,48 @@ def normalize_label(value):
     return " ".join(str(value).split()).strip().lower()
 
 
-PAIR_GROUPS = [
-    {"lớn", "nhỏ"},
-    {"lớn to", "nhỏ bé"},
-    {"sổ xố to", "sổ xố nhỏ"},
-    {"con to", "con nhỏ"},
-    {"nóng", "lạnh"},
-    {"tuyệt 13 cực nổ", "báo 60"},
-    {"làn sóng đỏ", "làn sóng xanh"},
-    {"làn sóng tím", "làn sóng vàng"},
-]
+def get_bet_pairs(config=None):
+    if not config:
+        return DEFAULT_BET_PAIRS
+    raw_pairs = config.get("bet_pairs") or []
+    cleaned = []
+    if isinstance(raw_pairs, list):
+        for pair in raw_pairs:
+            left = ""
+            right = ""
+            if isinstance(pair, dict):
+                left = str(pair.get("left", "")).strip()
+                right = str(pair.get("right", "")).strip()
+            elif isinstance(pair, (list, tuple)) and len(pair) >= 2:
+                left = str(pair[0]).strip()
+                right = str(pair[1]).strip()
+            if left and right:
+                cleaned.append({"left": left, "right": right})
+    return cleaned or DEFAULT_BET_PAIRS
 
 
-def is_same_pair(selections):
+def get_pair_groups(config=None):
+    return [
+        {normalize_label(pair["left"]), normalize_label(pair["right"])}
+        for pair in get_bet_pairs(config)
+    ]
+
+
+def is_same_pair(selections, config=None):
     if len(selections) != 2:
         return False
     normalized = {normalize_label(item) for item in selections}
-    return any(normalized == group for group in PAIR_GROUPS)
+    return any(normalized == group for group in get_pair_groups(config))
 
 
-def get_pair_options(selections):
+def get_pair_options(selections, config=None):
     if len(selections) != 2:
         return []
     normalized = {normalize_label(item) for item in selections}
-    for group in PAIR_GROUPS:
+    for pair in get_bet_pairs(config):
+        group = {normalize_label(pair["left"]), normalize_label(pair["right"])}
         if normalized == group:
-            lookup = {normalize_label(item): item for item in selections}
-            return [lookup.get(label, label) for label in group]
+            return [pair["left"], pair["right"]]
     return []
 
 
@@ -569,6 +596,7 @@ def game_detail(slug):
         "game.html",
         user=user,
         config=config,
+        bet_pairs=get_bet_pairs(config),
         game=game,
         user_odds=user_odds,
         telegram_link=TELEGRAM_CSKH,
@@ -764,16 +792,16 @@ def api_bet_place():
     selections = list(dict.fromkeys(selections))
     selection_count = len(selections)
 
+    config = load_site_config()
+
     if not selections or amount <= 0:
         return jsonify({"ok": False, "message": "Thiếu dữ liệu đặt cược."}), 400
     if selection_count < 1:
         return jsonify({"ok": False, "message": "Vui lòng chọn ít nhất 1 cửa."}), 400
     if selection_count > 2:
         return jsonify({"ok": False, "message": "Chỉ được chọn tối đa 2 cửa."}), 400
-    if selection_count == 2 and not is_same_pair(selections):
+    if selection_count == 2 and not is_same_pair(selections, config):
         return jsonify({"ok": False, "message": "Chỉ được chọn 2 cửa cùng cặp đối nhau."}), 400
-
-    config = load_site_config()
     user_odds = get_user_odds(user, game_slug, config)
     allowed_odds = {float(user_odds.get("odds_high", 2.1)), float(user_odds.get("odds_low", 1.98))}
     if odds not in allowed_odds:
@@ -789,7 +817,7 @@ def api_bet_place():
     bets = load_bets()
     bet_ids = []
     pair_id = uuid.uuid4().hex[:8] if selection_count == 2 else ""
-    pair_options = get_pair_options(selections) if selection_count == 2 else []
+    pair_options = get_pair_options(selections, config) if selection_count == 2 else []
 
     for selection in selections:
         bet_id = uuid.uuid4().hex[:10]
@@ -842,9 +870,10 @@ def api_bet_settle():
         return jsonify({"ok": False, "message": "Cược đã kết thúc."}), 400
 
     selections = bet.get("selections") or []
+    config = load_site_config()
     normalized_outcome = normalize_label(outcome)
     normalized_selections = {normalize_label(item) for item in selections}
-    if is_same_pair(selections) and normalized_outcome not in normalized_selections:
+    if is_same_pair(selections, config) and normalized_outcome not in normalized_selections:
         bet_round = bet.get("round")
         try:
             bet_round = int(bet_round)
@@ -1146,6 +1175,23 @@ def admin():
                 cskh_logo_file.save(logo_path)
                 config["cskh_logo"] = f"/uploads/{filename}"
 
+        if section == "bet_labels":
+            pairs = []
+            try:
+                pair_count = int(request.form.get("bet_pairs_count") or 0)
+            except ValueError:
+                pair_count = 0
+            for idx in range(pair_count):
+                left = (request.form.get(f"bet_left_{idx}") or "").strip()
+                right = (request.form.get(f"bet_right_{idx}") or "").strip()
+                if left and right:
+                    pairs.append({"left": left, "right": right})
+            if pairs:
+                config["bet_pairs"] = pairs
+                flash("Đã cập nhật tên cửa cược.", "success")
+            else:
+                flash("Vui lòng nhập đủ tên cửa cược.", "error")
+
         if section == "edit_games":
             games = load_games()
             updated = 0
@@ -1272,6 +1318,7 @@ def admin():
     return render_template(
         "admin.html",
         config=config,
+        bet_pairs=get_bet_pairs(config),
         games=games,
         banks=BANKS_VN,
         telegram_link=TELEGRAM_CSKH,

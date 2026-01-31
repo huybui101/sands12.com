@@ -28,6 +28,7 @@
         <a class="menu-pill" href="#section-game-images" data-section="section-game-images" data-i18n="admin_menu_game_images">ẢNH TRÒ CHƠI</a>
         <a class="menu-pill" href="#section-add-game" data-section="section-add-game" data-i18n="admin_menu_add_game">THÊM TRÒ CHƠI</a>
         <a class="menu-pill" href="#section-edit-game" data-section="section-edit-game">SỬA TÊN TRÒ CHƠI</a>
+        <a class="menu-pill" href="#section-bet-labels" data-section="section-bet-labels" data-i18n="admin_menu_bet_labels">SỬA TÊN CỬA CƯỢC</a>
         <a class="menu-pill" href="#section-theme" data-section="section-theme" data-i18n="admin_menu_theme">THAY ĐỔI GIAO DIỆN</a>
         <a class="menu-pill" href="#section-tips" data-section="section-tips" data-i18n="admin_menu_tips">MẸO NHỎ</a>
         <a class="menu-pill" href="#section-config" data-section="section-config" data-i18n="admin_menu_config">CÀI CẤU HÌNH</a>
@@ -464,6 +465,27 @@
         {% endfor %}
       </div>
       <button class="btn primary" type="submit">Lưu tên trò chơi</button>
+    </form>
+      </section>
+
+      <section class="admin-placeholder admin-block" id="section-bet-labels" data-section="section-bet-labels">
+    <h3 data-i18n="admin_bet_labels">Sửa tên cửa cược</h3>
+    <form method="post" action="{{ url_for('admin') }}">
+      <input type="hidden" name="section" value="bet_labels" />
+      <input type="hidden" name="bet_pairs_count" value="{{ bet_pairs|length }}" />
+      <div class="form-grid">
+        {% for pair in bet_pairs %}
+          <label>
+            <span data-i18n="admin_bet_label_left">Cửa trái</span>
+            <input type="text" name="bet_left_{{ loop.index0 }}" value="{{ pair.left }}" />
+          </label>
+          <label>
+            <span data-i18n="admin_bet_label_right">Cửa phải</span>
+            <input type="text" name="bet_right_{{ loop.index0 }}" value="{{ pair.right }}" />
+          </label>
+        {% endfor %}
+      </div>
+      <button class="btn primary" type="submit" data-i18n="admin_save_bet_labels">Lưu tên cửa cược</button>
     </form>
       </section>
 
