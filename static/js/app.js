@@ -2093,6 +2093,19 @@ if (countdownEl && resultText) {
     updateCountdownDisplay();
   };
 
+  const isInvalidBetMessage = (message) => {
+    if (!message) return false;
+    const text = String(message).toLowerCase();
+    return (
+      text.includes('không tìm thấy cược') ||
+      text.includes('cược đã kết thúc') ||
+      text.includes('vui lòng đăng nhập') ||
+      text.includes('not found') ||
+      text.includes('already finished') ||
+      text.includes('unauthorized')
+    );
+  };
+
   const scheduleSettleRetry = () => {
     if (settleRetryTimer) clearTimeout(settleRetryTimer);
     settleRetryTimer = setTimeout(() => {
@@ -2135,8 +2148,8 @@ if (countdownEl && resultText) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ bet_id: currentBetId, outcome: outcomeName }),
       })
-        .then((response) => response.json())
-        .then((data) => {
+        .then((response) => response.json().then((data) => ({ ok: response.ok, data })))
+        .then(({ ok, data }) => {
           if (data.ok) {
             currentBalance = Number(data.balance || currentBalance);
             updateBalanceDisplay();
@@ -2162,7 +2175,11 @@ if (countdownEl && resultText) {
             resetBetState();
           } else {
             resultText.textContent = `Kết quả: ${outcomeName} (odds ${odds})`;
-            scheduleSettleRetry();
+            if (!ok || isInvalidBetMessage(data.message)) {
+              resetBetState();
+            } else {
+              scheduleSettleRetry();
+            }
           }
         })
         .catch(() => {
