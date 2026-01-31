@@ -1841,6 +1841,23 @@ const formatMoney = (value) => {
 };
 
 const formatBalance = (value) => `${formatMoney(value)}$`;
+const parseMoneyText = (text) => {
+  if (!text) return 0;
+  let value = String(text).replace(/[^0-9,.-]/g, '').trim();
+  if (!value) return 0;
+  const hasComma = value.includes(',');
+  const hasDot = value.includes('.');
+  if (hasComma && hasDot) {
+    value = value.replace(/\./g, '').replace(',', '.');
+  } else if (hasComma && !hasDot) {
+    value = value.replace(',', '.');
+  }
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : 0;
+};
+if (!Number.isFinite(currentBalance) || currentBalance < 0) {
+  currentBalance = parseMoneyText(balanceValueEl?.textContent || '');
+}
 
 const parseAmount = (value) => {
   const numeric = Number(String(value || '').replace(',', '.'));

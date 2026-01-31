@@ -114,9 +114,9 @@
     <a class="btn ghost small" href="{{ url_for('records', record_type='bet') }}" data-i18n="open_history">Mở lịch sử</a>
   </div>
 
-  <div class="bet-amount" data-balance="{{ user.balance if user else 0 }}">
+  <div class="bet-amount" data-balance="{{ '%.2f' % (user.balance if user else 0) }}">
     <h3 data-i18n="bet_amount_title">Tiền đặt cược</h3>
-    <div class="balance-row"><span data-i18n="current_balance">Số dư hiện tại</span>: <strong id="balance-value">{{ user.balance if user else 0 }}$</strong></div>
+    <div class="balance-row"><span data-i18n="current_balance">Số dư hiện tại</span>: <strong id="balance-value">{{ '%.2f' % (user.balance if user else 0) }}$</strong></div>
     <div class="bet-amount-row">
       <button class="amount-chip" data-percent="10">10%</button>
       <button class="amount-chip" data-percent="20">20%</button>
