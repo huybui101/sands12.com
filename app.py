@@ -280,6 +280,46 @@ def get_user_odds(user, game_slug, default_config=None):
     }
 
 
+def get_current_round_index():
+    round_ms = 10 * 60 * 1000
+    vn_offset_minutes = 7 * 60
+    now = datetime.utcnow().timestamp() * 1000
+    vn_now = now + vn_offset_minutes * 60 * 1000
+    return int(vn_now // round_ms)
+
+
+def settle_pending_bets(user):
+    if not user:
+        return
+    bets = load_bets()
+    current_round = get_current_round_index()
+    updated = False
+    for bet in bets:
+        if bet.get("user_id") != user.get("id"):
+            continue
+        if bet.get("status") != "pending":
+            continue
+        bet_round = bet.get("round")
+        try:
+            bet_round = int(bet_round)
+        except Exception:
+            bet_round = None
+        if bet_round is None or bet_round >= current_round:
+            continue
+
+        total_stake = float(bet.get("total_stake", bet.get("amount", 0) or 0))
+        bet["status"] = "lose"
+        bet["outcome"] = "Hệ thống"
+        bet["payout"] = 0
+        bet["settled_at"] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        user["loss"] = round(float(user.get("loss", 0)) + total_stake, 2)
+        updated = True
+
+    if updated:
+        save_users(USERS)
+        save_bets(bets)
+
+
 def is_admin():
     return session.get("is_admin") is True
 
@@ -367,6 +407,7 @@ def lobby():
 def mine():
     config = load_site_config()
     user = current_user()
+    settle_pending_bets(user)
     transactions = load_transactions()
     user_transactions = []
     income_total = 0.0
@@ -445,6 +486,7 @@ def game_detail(slug):
 def records(record_type):
     config = load_site_config()
     user = current_user()
+    settle_pending_bets(user)
     records_list = []
     if user:
         if record_type == "bet":
