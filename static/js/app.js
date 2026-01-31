@@ -106,6 +106,10 @@ if (otpBtn) {
     const input = document.getElementById('otp-input');
     if (input) input.value = code;
     otpBtn.textContent = 'Đã gửi';
+    otpBtn.setAttribute('data-code', String(code));
+    if (typeof window !== 'undefined' && window.alert) {
+      window.alert(`Mã OTP của bạn: ${code}`);
+    }
   });
 }
     let betToastTimer = null;
@@ -404,7 +408,7 @@ if (langSelects.length) {
       have_account: 'Đã có tài khoản?',
       otp: 'Mã xác thực',
       send_code: 'Gửi mã',
-      otp_note: 'Mã OTP là dạng demo (6 chữ số).',
+      otp_note: 'Mã OTP gồm 6 chữ số.',
       admin_login: 'Đăng nhập hậu đài',
       records_title_bet: 'Lịch sử cược',
       records_title_deposit: 'Nạp tiền',
@@ -678,7 +682,7 @@ if (langSelects.length) {
       have_account: 'Already have an account?',
       otp: 'OTP code',
       send_code: 'Send code',
-      otp_note: 'OTP is demo (6 digits).',
+      otp_note: 'OTP is 6 digits.',
       admin_login: 'Admin login',
       records_title_bet: 'Bet history',
       records_title_deposit: 'Deposit',
@@ -835,7 +839,7 @@ if (langSelects.length) {
       have_account: '已有账号？',
       otp: '验证码',
       send_code: '发送验证码',
-      otp_note: 'OTP 为演示（6位数字）。',
+      otp_note: 'OTP 为 6 位数字。',
       admin_login: '后台登录',
       records_title_bet: '投注记录',
       records_title_deposit: '充值',
@@ -990,7 +994,7 @@ if (langSelects.length) {
       have_account: '既にアカウントあり？',
       otp: '認証コード',
       send_code: 'コード送信',
-      otp_note: 'OTPはデモ（6桁）。',
+      otp_note: 'OTPは6桁です。',
       admin_login: '管理者ログイン',
       records_title_bet: 'ベット履歴',
       records_title_deposit: '入金',
@@ -1145,7 +1149,7 @@ if (langSelects.length) {
       have_account: '이미 계정이 있나요?',
       otp: '인증 코드',
       send_code: '코드 보내기',
-      otp_note: 'OTP는 데모(6자리)입니다.',
+      otp_note: 'OTP는 6자리입니다.',
       admin_login: '관리자 로그인',
       records_title_bet: '베팅 내역',
       records_title_deposit: '입금',
@@ -1300,7 +1304,7 @@ if (langSelects.length) {
       have_account: 'มีบัญชีแล้ว?',
       otp: 'รหัสยืนยัน',
       send_code: 'ส่งรหัส',
-      otp_note: 'OTP เป็นตัวอย่าง (6 หลัก)',
+      otp_note: 'OTP มี 6 หลัก',
       admin_login: 'เข้าสู่ระบบแอดมิน',
       records_title_bet: 'ประวัติการเดิมพัน',
       records_title_deposit: 'ฝากเงิน',
@@ -1455,7 +1459,7 @@ if (langSelects.length) {
       have_account: 'Déjà un compte ?',
       otp: 'Code OTP',
       send_code: 'Envoyer le code',
-      otp_note: 'OTP démo (6 chiffres).',
+      otp_note: 'OTP (6 chiffres).',
       admin_login: 'Connexion admin',
       records_title_bet: 'Historique des paris',
       records_title_deposit: 'Dépôt',
@@ -1610,7 +1614,7 @@ if (langSelects.length) {
       have_account: '¿Ya tienes cuenta?',
       otp: 'Código OTP',
       send_code: 'Enviar código',
-      otp_note: 'OTP demo (6 dígitos).',
+      otp_note: 'OTP de 6 dígitos.',
       admin_login: 'Inicio admin',
       records_title_bet: 'Historial de apuestas',
       records_title_deposit: 'Depósito',
