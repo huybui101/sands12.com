@@ -2152,11 +2152,58 @@ if (countdownEl && resultText) {
       if (currentBetIds.length && !isSettlingBet) {
         resolveRound();
       }
-    if (currentBetIds.length) {
+    }, 3000);
   };
 
   const updateRoundCount = () => {
     if (roundCountEl) {
+      const nextRound = Math.floor(100 + Math.random() * 900);
+      roundCountEl.textContent = String(nextRound);
+    }
+  };
+
+  const updateCountdownDisplay = () => {
+    const vnNow = getVietnamNowMs();
+    const elapsedInRound = Math.floor((vnNow % roundMs) / 1000);
+    const remaining = 600 - elapsedInRound;
+    const minutes = String(Math.floor(remaining / 60)).padStart(2, '0');
+    const seconds = String(remaining % 60).padStart(2, '0');
+    countdownEl.textContent = `${minutes}:${seconds}`;
+  };
+
+  const resolveRound = () => {
+    updateRoundCount();
+    const options = Array.from(document.querySelectorAll('.bet-option'));
+    if (!options.length) return;
+    const betInfo = loadCurrentBetInfo();
+    const activeOptions = Array.from(document.querySelectorAll('.bet-option.active'));
+    const pickOptionsByLabels = (labels) => {
+      if (!Array.isArray(labels) || !labels.length) return [];
+      const labelSet = new Set(labels.map((label) => String(label || '').trim()));
+      return options.filter((opt) => labelSet.has(getOptionLabel(opt)));
+    };
+    let candidateOptions = activeOptions;
+    if (!candidateOptions.length && betInfo?.selections?.length) {
+      candidateOptions = pickOptionsByLabels(betInfo.selections);
+    }
+    let outcomePool = options;
+    if (candidateOptions.length === 2) {
+      const pairA = candidateOptions[0].closest('.bet-pair');
+      const pairB = candidateOptions[1].closest('.bet-pair');
+      if (pairA && pairA === pairB) {
+        outcomePool = candidateOptions;
+      }
+    }
+    const outcome = outcomePool[Math.floor(Math.random() * outcomePool.length)];
+    const outcomeName = pendingOutcomeName || getOptionLabel(outcome) || outcome.textContent.trim().split('\n')[0];
+    const odds = pendingOutcomeOdds || outcome.getAttribute('data-odds') || '-';
+
+    if (currentBetIds.length) {
+      if (isSettlingBet) return;
+      pendingOutcomeName = outcomeName;
+      pendingOutcomeOdds = odds;
+      isSettlingBet = true;
+
       const settleOne = (betId) => fetch('/api/bet/settle', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -2192,51 +2239,6 @@ if (countdownEl && resultText) {
             }
           }
         })
-    const odds = pendingOutcomeOdds || outcome.getAttribute('data-odds') || '-';
-    if (currentBetId) {
-      if (isSettlingBet) return;
-      pendingOutcomeName = outcomeName;
-      pendingOutcomeOdds = odds;
-      isSettlingBet = true;
-      fetch('/api/bet/settle', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bet_id: currentBetId, outcome: outcomeName }),
-      })
-        .then((response) => response.json().then((data) => ({ ok: response.ok, data })))
-        .then(({ ok, data }) => {
-          if (data.ok) {
-            currentBalance = Number(data.balance || currentBalance);
-            updateBalanceDisplay();
-            if (data.status === 'win') {
-                        const net = Number(data.net ?? (Number(data.payout || 0) - Number(data.total_stake || placedBetAmount || 0)));
-                        const netLabel = net >= 0
-                          ? t('bet_net_win', { amount: formatMoney(net) }, `Lãi +${formatMoney(net)}$`)
-                          : t('bet_net_lose', { amount: formatMoney(Math.abs(net)) }, `Lỗ -${formatMoney(Math.abs(net))}$`);
-                        resultText.textContent = t(
-                          'bet_result_template',
-                          { outcome: outcomeName, odds, net: netLabel },
-                          `Kết quả: ${outcomeName} (odds ${odds}) - ${netLabel}`
-                        );
-            } else {
-                        const totalStake = Number(data.total_stake || placedBetAmount || 0);
-                        const netLabel = t('bet_net_lose', { amount: formatMoney(totalStake) }, `Lỗ -${formatMoney(totalStake)}$`);
-                        resultText.textContent = t(
-                          'bet_result_template',
-                          { outcome: outcomeName, odds, net: netLabel },
-                          `Kết quả: ${outcomeName} (odds ${odds}) - ${netLabel}`
-                        );
-            }
-            resetBetState();
-          } else {
-            resultText.textContent = `Kết quả: ${outcomeName} (odds ${odds})`;
-            if (!ok || isInvalidBetMessage(data.message)) {
-              resetBetState();
-            } else {
-              scheduleSettleRetry();
-            }
-          }
-        })
         .catch(() => {
           resultText.textContent = `Kết quả: ${outcomeName} (odds ${odds})`;
           scheduleSettleRetry();
@@ -2256,7 +2258,7 @@ if (countdownEl && resultText) {
     updateCountdownDisplay();
 
     if (
-      currentBetId &&
+      currentBetIds.length &&
       Number.isFinite(currentBetRoundIndex) &&
       roundIndex > currentBetRoundIndex
     ) {
