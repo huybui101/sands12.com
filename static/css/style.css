@@ -1387,15 +1387,16 @@ input:focus, select:focus, textarea:focus {
   margin-top: 24px;
   display: grid;
   gap: 20px;
-  max-width: 1200px;
+  max-width: 1480px;
   margin-left: auto;
   margin-right: auto;
+  padding: 0 16px;
 }
 
 .admin-light {
   background: #ffffff;
   color: #111111;
-  padding: 20px;
+  padding: 24px;
   border-radius: 18px;
   font-weight: 500;
 }
@@ -1469,19 +1470,22 @@ input:focus, select:focus, textarea:focus {
 
 .admin-layout {
   display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: 18px;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 22px;
 }
 
 .admin-sidebar {
   position: sticky;
   top: 96px;
   align-self: start;
+  max-height: calc(100vh - 120px);
+  overflow: auto;
+  padding-right: 4px;
 }
 
 .admin-main {
   display: grid;
-  gap: 18px;
+  gap: 20px;
 }
 
 .admin-menu {
@@ -1622,7 +1626,7 @@ input:focus, select:focus, textarea:focus {
 .admin-form {
   background: rgba(255, 255, 255, 0.03);
   border-radius: 20px;
-  padding: 20px;
+  padding: 22px;
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
