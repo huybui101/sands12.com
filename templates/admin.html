@@ -77,6 +77,14 @@
           </div>
           <label><input type="checkbox" name="clear_heroes" /> <span data-i18n="admin_clear_heroes">Xóa tất cả hero</span></label>
         {% endif %}
+
+        <label><span>Banner đăng ký/đăng nhập</span><input type="file" name="landing_banner" accept="image/*" /></label>
+        {% if config.landing_banner %}
+          <div class="preview-row">
+            <img src="{{ config.landing_banner }}" alt="Landing Banner" />
+            <label><input type="checkbox" name="clear_landing_banner" /> <span>Xóa banner đăng ký/đăng nhập</span></label>
+          </div>
+        {% endif %}
         <div class="admin-actions">
           <button class="btn primary" type="submit" data-i18n="admin_update_logo_banner">Cập nhật logo/banner</button>
         </div>

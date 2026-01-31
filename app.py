@@ -122,6 +122,7 @@ def default_site_config():
     return {
         "site_name": "SANDS",
         "logo": "",
+        "landing_banner": "",
         "hero_images": [],
         "marquee": [
             "Nguyễn A vừa thắng 520$ tại Phi Thuyền May Mắn",
@@ -396,6 +397,31 @@ def inject_admin_context():
         "is_admin": is_admin(),
         "admin_username": ADMIN_USERNAME,
     }
+
+
+PUBLIC_ENDPOINTS = {
+    "home",
+    "login",
+    "register",
+    "cskh",
+    "cskh_messages",
+    "uploads",
+    "static",
+    "admin_login",
+    "admin",
+    "admin_logout",
+}
+
+
+@app.before_request
+def guard_login():
+    if request.endpoint in PUBLIC_ENDPOINTS:
+        return None
+    if request.endpoint and request.endpoint.startswith("admin"):
+        return None
+    if current_user() is None:
+        return redirect(url_for("home"))
+    return None
 
 
 @app.route("/uploads/<path:filename>")
@@ -1059,6 +1085,9 @@ def admin():
         if request.form.get("clear_logo"):
             config["logo"] = ""
 
+        if request.form.get("clear_landing_banner"):
+            config["landing_banner"] = ""
+
         if request.form.get("clear_heroes"):
             config["hero_images"] = []
 
@@ -1113,8 +1142,18 @@ def admin():
             logo_file.save(logo_path)
             config["logo"] = f"/uploads/{filename}"
             flash("Đã cập nhật logo.", "success")
-        elif section == "logo" and not request.form.get("clear_logo") and not request.files.getlist("hero_images"):
+        elif section == "logo" and not request.form.get("clear_logo") and not request.files.getlist("hero_images") and not request.files.get("landing_banner"):
             flash("Chưa chọn file logo hoặc banner.", "error")
+
+        landing_banner_file = request.files.get("landing_banner")
+        if landing_banner_file and landing_banner_file.filename:
+            safe_name = secure_filename(landing_banner_file.filename)
+            ext = Path(safe_name).suffix or ".png"
+            filename = f"landing-banner-{uuid.uuid4().hex}{ext}"
+            banner_path = UPLOAD_DIR / filename
+            landing_banner_file.save(banner_path)
+            config["landing_banner"] = f"/uploads/{filename}"
+            flash("Đã cập nhật banner đăng ký/đăng nhập.", "success")
 
         hero_files = request.files.getlist("hero_images")
         if hero_files:
