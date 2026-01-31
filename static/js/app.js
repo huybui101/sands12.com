@@ -107,8 +107,9 @@ if (otpBtn) {
     if (input) input.value = code;
     otpBtn.textContent = 'Đã gửi';
     otpBtn.setAttribute('data-code', String(code));
-    if (typeof window !== 'undefined' && window.alert) {
-      window.alert(`Mã OTP của bạn: ${code}`);
+    const statusEl = document.getElementById('otp-status');
+    if (statusEl) {
+      statusEl.textContent = `Mã OTP của bạn: ${code}`;
     }
   });
 }
