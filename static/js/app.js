@@ -99,20 +99,19 @@ if (floatingCskh) {
   });
 }
 
-const otpBtn = document.getElementById('otp-btn');
-if (otpBtn) {
-  otpBtn.addEventListener('click', () => {
-    const code = Math.floor(100000 + Math.random() * 900000);
-    const input = document.getElementById('otp-input');
-    if (input) input.value = code;
-    otpBtn.textContent = 'Đã gửi';
-    otpBtn.setAttribute('data-code', String(code));
-    const statusEl = document.getElementById('otp-status');
-    if (statusEl) {
-      statusEl.textContent = `Mã OTP của bạn: ${code}`;
-    }
-  });
-}
+document.addEventListener('click', (event) => {
+  const otpBtn = event.target.closest('#otp-btn');
+  if (!otpBtn) return;
+  const code = Math.floor(100000 + Math.random() * 900000);
+  const input = document.getElementById('otp-input');
+  if (input) input.value = code;
+  otpBtn.textContent = 'Đã gửi';
+  otpBtn.setAttribute('data-code', String(code));
+  const statusEl = document.getElementById('otp-status');
+  if (statusEl) {
+    statusEl.textContent = `Mã OTP của bạn: ${code}`;
+  }
+});
     let betToastTimer = null;
     const showBetToast = (message, isSuccess) => {
       if (!message) return;
@@ -2410,34 +2409,49 @@ if (adminMenu) {
 
 const approvalSection = document.getElementById('section-approval');
 if (approvalSection) {
-  const idInput = approvalSection.querySelector('input[name="tx_user_id"]');
-  const userSelect = approvalSection.querySelector('select[name="tx_username"]');
+  const forms = Array.from(approvalSection.querySelectorAll('form'));
+  forms.forEach((form) => {
+    const idInput = form.querySelector('input[name="tx_user_id"]');
+    const userSelect = form.querySelector('select[name="tx_username"]');
+    const findBtn = form.querySelector('.js-find-user');
 
-  const findOptionById = (value) => {
-    if (!userSelect) return null;
-    const target = String(value || '').trim();
-    if (!target) return null;
-    return Array.from(userSelect.options).find(
-      (opt) => String(opt.getAttribute('data-user-id') || '').trim() === target
-    );
-  };
+    const findOptionById = (value) => {
+      if (!userSelect) return null;
+      const target = String(value || '').trim();
+      if (!target) return null;
+      return Array.from(userSelect.options).find(
+        (opt) => String(opt.getAttribute('data-user-id') || '').trim() === target
+      );
+    };
 
-  if (idInput && userSelect) {
-    idInput.addEventListener('input', () => {
-      const match = findOptionById(idInput.value);
-      if (match) {
-        userSelect.value = match.value;
-      } else if (!String(idInput.value || '').trim()) {
-        userSelect.value = '';
-      }
-    });
+    if (idInput && userSelect) {
+      idInput.addEventListener('input', () => {
+        const match = findOptionById(idInput.value);
+        if (match) {
+          userSelect.value = match.value;
+        } else if (!String(idInput.value || '').trim()) {
+          userSelect.value = '';
+        }
+      });
 
-    userSelect.addEventListener('change', () => {
-      const selected = userSelect.options[userSelect.selectedIndex];
-      const userId = selected?.getAttribute('data-user-id') || '';
-      if (idInput) idInput.value = userId;
-    });
-  }
+      userSelect.addEventListener('change', () => {
+        const selected = userSelect.options[userSelect.selectedIndex];
+        const userId = selected?.getAttribute('data-user-id') || '';
+        if (idInput) idInput.value = userId;
+      });
+    }
+
+    if (findBtn && idInput && userSelect) {
+      findBtn.addEventListener('click', () => {
+        const match = findOptionById(idInput.value);
+        if (match) {
+          userSelect.value = match.value;
+        } else {
+          alert('Không tìm thấy ID người chơi.');
+        }
+      });
+    }
+  });
 }
 
 const adminChat = document.querySelector('.admin-chat');
