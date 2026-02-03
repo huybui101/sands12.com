@@ -59,6 +59,40 @@
   "marquee_speed": 0.2,
   "odds_low": 1.98,
   "odds_high": 1.98,
+  "bet_pairs": [
+    {
+      "left": "Lớn",
+      "right": "Nhỏ"
+    },
+    {
+      "left": "Lớn to",
+      "right": "Nhỏ bé"
+    },
+    {
+      "left": "Xổ số to",
+      "right": "Xổ số nhỏ"
+    },
+    {
+      "left": "Con to",
+      "right": "Con nhỏ"
+    },
+    {
+      "left": "Nóng",
+      "right": "Lạnh"
+    },
+    {
+      "left": "Tuyệt 13 cực nổ",
+      "right": "Báo 60"
+    },
+    {
+      "left": "Làn sóng đỏ",
+      "right": "Làn sóng xanh"
+    },
+    {
+      "left": "Làn sóng tím",
+      "right": "Làn sóng vàng"
+    }
+  ],
   "game_images": {
     "phi-thuyen-may-man": "/uploads/game-phi-thuyen-may-man-103b686959494246a1facc7eccd19c0a.jpg",
     "may-man-den": "/uploads/game-may-man-den-5210b87111c24daaa4e9cb02eef3305d.jpg",
