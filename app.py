@@ -62,19 +62,19 @@ GAMES_DEFAULT = [
     {"name": "Phi Thuyền May Mắn", "slug": "phi-thuyen-may-man", "category": "casino"},
     {"name": "May Mắn Đến", "slug": "may-man-den", "category": "casino"},
     {"name": "Ngôi Sao May Mắn", "slug": "ngoi-sao-may-man", "category": "casino"},
-    {"name": "Sổ Xố Đếm Ngược", "slug": "so-xo-dem-nguoc", "category": "casino"},
+    {"name": "Xổ Số Đếm Ngược", "slug": "so-xo-dem-nguoc", "category": "casino"},
     {"name": "Rất Vui", "slug": "rat-vui", "category": "casino"},
-    {"name": "Nhanh Lên Sổ Xố", "slug": "nhanh-len-so-xo", "category": "casino"},
+    {"name": "Nhanh Lên Xổ Số", "slug": "nhanh-len-so-xo", "category": "casino"},
     {"name": "Nhanh 1", "slug": "nhanh-1", "category": "casino"},
     {"name": "Singapore PK 10", "slug": "singapore-pk-10", "category": "casino"},
     {"name": "Cược Hạnh Phúc", "slug": "cuoc-hanh-phuc", "category": "casino"},
-    {"name": "Số Xố Singapore", "slug": "so-xo-singapore", "category": "casino"},
+    {"name": "Xổ Số Singapore", "slug": "so-xo-singapore", "category": "casino"},
 ]
 
 DEFAULT_BET_PAIRS = [
     {"left": "Lớn", "right": "Nhỏ"},
     {"left": "Lớn to", "right": "Nhỏ bé"},
-    {"left": "Sổ xố to", "right": "Sổ xố nhỏ"},
+    {"left": "Xổ số to", "right": "Xổ số nhỏ"},
     {"left": "Con to", "right": "Con nhỏ"},
     {"left": "Nóng", "right": "Lạnh"},
     {"left": "Tuyệt 13 cực nổ", "right": "Báo 60"},
@@ -153,7 +153,7 @@ def default_site_config():
         "marquee": [
             "Nguyễn A vừa thắng 520$ tại Phi Thuyền May Mắn",
             "Trần B đang chơi Singapore PK 10 và lãi 1200$",
-            "Lê C thắng 88$ tại Sổ Xố Đếm Ngược",
+            "Lê C thắng 88$ tại Xổ Số Đếm Ngược",
         ],
         "marquee_speed": 0.4,
         "odds_low": 1.98,
@@ -291,7 +291,7 @@ def get_user_odds(user, game_slug, default_config=None):
     """Return odds dict for a user and specific game.
     Falls back to site-wide odds when no override is set.
     """
-    default_high = 2.1
+    default_high = 1.98
     default_low = 1.98
     if default_config:
         try:
@@ -333,8 +333,8 @@ def get_bet_pairs(config=None):
             if isinstance(pair, dict):
                 left = str(pair.get("left", "")).strip()
                 right = str(pair.get("right", "")).strip()
-            elif isinstance(pair, (list, tuple)) and len(pair) >= 2:
-                left = str(pair[0]).strip()
+        "odds_low": 1.98,
+        "odds_high": 1.98,
                 right = str(pair[1]).strip()
             if left and right:
                 cleaned.append({"left": left, "right": right})
@@ -1526,6 +1526,34 @@ def admin_update_user_bank(user_id):
     }
     save_users(USERS)
     flash("Đã cập nhật ngân hàng.", "success")
+    return redirect(url_for("admin"))
+
+
+@app.route("/admin/users/<user_id>/created-at", methods=["POST"])
+def admin_update_user_created_at(user_id):
+    guard = require_admin()
+    if guard:
+        return guard
+    user = USERS.get(user_id)
+    if not user:
+        flash("Không tìm thấy người dùng.", "error")
+        return redirect(url_for("admin"))
+
+    created_at_raw = (request.form.get("created_at") or "").strip()
+    if not created_at_raw:
+        flash("Vui lòng nhập thời gian tạo tài khoản.", "error")
+        return redirect(url_for("admin"))
+
+    created_at_value = created_at_raw
+    try:
+        created_at_value = datetime.fromisoformat(created_at_raw).strftime("%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        if "T" in created_at_raw:
+            created_at_value = created_at_raw.replace("T", " ")
+
+    user["created_at"] = created_at_value
+    save_users(USERS)
+    flash("Đã cập nhật thời gian tạo tài khoản.", "success")
     return redirect(url_for("admin"))
 
 
