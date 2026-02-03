@@ -74,7 +74,6 @@ GAMES_DEFAULT = [
 DEFAULT_BET_PAIRS = [
     {"left": "Lớn", "right": "Nhỏ"},
     {"left": "Lớn to", "right": "Nhỏ bé"},
-    {"left": "Xổ số to", "right": "Xổ số nhỏ"},
     {"left": "Con to", "right": "Con nhỏ"},
     {"left": "Nóng", "right": "Lạnh"},
     {"left": "Tuyệt 13 cực nổ", "right": "Báo 60"},
