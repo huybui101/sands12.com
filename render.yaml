@@ -6,3 +6,10 @@ services:
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn wsgi:application --config gunicorn.conf.py"
     autoDeploy: true
+    envVars:
+      - key: PERSIST_ROOT
+        value: /var/data
+    disks:
+      - name: sands-data
+        mountPath: /var/data
+        sizeGB: 1

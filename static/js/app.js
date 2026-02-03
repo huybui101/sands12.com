@@ -29,6 +29,20 @@ rangeInputs.forEach((input) => {
   update();
 });
 
+const passwordToggles = document.querySelectorAll('.password-toggle');
+passwordToggles.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const field = btn.closest('.password-field');
+    const input = field ? field.querySelector('input') : null;
+    if (!input) return;
+    const isHidden = input.type === 'password';
+    input.type = isHidden ? 'text' : 'password';
+    btn.setAttribute('aria-pressed', String(isHidden));
+    btn.setAttribute('aria-label', isHidden ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
+    btn.textContent = isHidden ? '🙈' : '👁';
+  });
+});
+
 const floatingCskh = document.querySelector('.floating-cskh');
 if (floatingCskh) {
   let isDragging = false;

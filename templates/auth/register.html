@@ -7,7 +7,12 @@
     <h2 data-i18n="register">Đăng ký</h2>
     <form method="post" id="register-form">
       <label><span data-i18n="username">Tài khoản</span><input type="text" name="username" required /></label>
-      <label><span data-i18n="password">Mật khẩu</span><input type="password" name="password" required /></label>
+      <label><span data-i18n="password">Mật khẩu</span>
+        <div class="password-field">
+          <input type="password" name="password" required />
+          <button class="password-toggle" type="button" aria-label="Hiện mật khẩu" aria-pressed="false">👁</button>
+        </div>
+      </label>
       <label><span data-i18n="phone">Số điện thoại</span><input type="text" name="phone" required /></label>
       <label><span data-i18n="otp">Mã xác thực</span>
         <div class="otp-row">

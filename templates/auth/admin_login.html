@@ -7,7 +7,12 @@
     <h2 data-i18n="admin_login">Đăng nhập hậu đài</h2>
     <form method="post">
       <label><span data-i18n="username">Tài khoản</span><input type="text" name="username" required /></label>
-      <label><span data-i18n="password">Mật khẩu</span><input type="password" name="password" required /></label>
+      <label><span data-i18n="password">Mật khẩu</span>
+        <div class="password-field">
+          <input type="password" name="password" required />
+          <button class="password-toggle" type="button" aria-label="Hiện mật khẩu" aria-pressed="false">👁</button>
+        </div>
+      </label>
       <button class="btn primary" type="submit" data-i18n="login">Đăng nhập</button>
     </form>
   </div>

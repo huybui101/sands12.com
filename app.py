@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import shutil
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -15,11 +16,38 @@ ADMIN_USERNAME = "Admin123"
 ADMIN_PASSWORD = "Admin123123"
 
 BASE_DIR = Path(__file__).resolve().parent
-DATA_DIR = BASE_DIR / "data"
-UPLOAD_DIR = BASE_DIR / "uploads"
+PERSIST_ROOT = Path(os.getenv("PERSIST_ROOT", "").strip() or BASE_DIR)
+DATA_DIR = PERSIST_ROOT / "data"
+UPLOAD_DIR = PERSIST_ROOT / "uploads"
 
-DATA_DIR.mkdir(exist_ok=True)
-UPLOAD_DIR.mkdir(exist_ok=True)
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+if PERSIST_ROOT != BASE_DIR:
+    seed_data_dir = BASE_DIR / "data"
+    if seed_data_dir.exists():
+        for filename in [
+            "site.json",
+            "cskh_messages.json",
+            "games.json",
+            "transactions.json",
+            "users.json",
+            "bets.json",
+        ]:
+            src_path = seed_data_dir / filename
+            dest_path = DATA_DIR / filename
+            if src_path.exists() and not dest_path.exists():
+                shutil.copy2(src_path, dest_path)
+    seed_upload_dir = BASE_DIR / "uploads"
+    if seed_upload_dir.exists():
+        for src_path in seed_upload_dir.rglob("*"):
+            if not src_path.is_file():
+                continue
+            rel_path = src_path.relative_to(seed_upload_dir)
+            dest_path = UPLOAD_DIR / rel_path
+            dest_path.parent.mkdir(parents=True, exist_ok=True)
+            if not dest_path.exists():
+                shutil.copy2(src_path, dest_path)
 
 SITE_CONFIG_PATH = DATA_DIR / "site.json"
 CSKH_PATH = DATA_DIR / "cskh_messages.json"
@@ -628,12 +656,16 @@ def records(record_type):
                     "value": user.get("username"),
                 },
                 {
+                    "label": "Số điện thoại",
+                    "value": user.get("phone", ""),
+                },
+                {
                     "label": "Số dư",
                     "value": f"{user.get('balance', 0)}$",
                 },
                 {
                     "label": "Ngày tạo",
-                    "value": user.t("created_at"),
+                    "value": user.get("created_at", ""),
                 },
             ]
         elif record_type == "created":

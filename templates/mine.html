@@ -115,15 +115,30 @@
       <div class="form-grid compact">
         <label><span data-i18n="username_label">Tên người dùng</span><input type="text" value="{{ user.username }}" disabled /></label>
         <label><span data-i18n="bank_name">Ngân hàng</span><input type="text" value="{{ user.bank.bank_name }}" disabled /></label>
-        <label><span data-i18n="phone">Số điện thoại</span><input type="text" value="{{ user.phone }}" disabled /></label>
+        <label><span data-i18n="phone">Số điện thoại</span><input type="text" value="{{ user.bank.phone if user.bank and user.bank.phone else user.phone }}" disabled /></label>
       </div>
       <p data-i18n="withdraw_min">Số dư tối thiểu: 100$</p>
       <label><span data-i18n="amount">Số tiền</span><input type="number" min="1" id="withdraw-amount" /></label>
       {% if not user.withdraw_password %}
-        <label><span data-i18n="withdraw_password_new">Mật khẩu rút tiền mới</span><input type="password" id="withdraw-password-new" /></label>
-        <label><span data-i18n="withdraw_password_confirm">Nhập lại mật khẩu</span><input type="password" id="withdraw-password-confirm" /></label>
+        <label><span data-i18n="withdraw_password_new">Mật khẩu rút tiền mới</span>
+          <div class="password-field">
+            <input type="password" id="withdraw-password-new" />
+            <button class="password-toggle" type="button" aria-label="Hiện mật khẩu" aria-pressed="false">👁</button>
+          </div>
+        </label>
+        <label><span data-i18n="withdraw_password_confirm">Nhập lại mật khẩu</span>
+          <div class="password-field">
+            <input type="password" id="withdraw-password-confirm" />
+            <button class="password-toggle" type="button" aria-label="Hiện mật khẩu" aria-pressed="false">👁</button>
+          </div>
+        </label>
       {% else %}
-        <label><span data-i18n="withdraw_password">Mật khẩu rút tiền</span><input type="password" id="withdraw-password" /></label>
+        <label><span data-i18n="withdraw_password">Mật khẩu rút tiền</span>
+          <div class="password-field">
+            <input type="password" id="withdraw-password" />
+            <button class="password-toggle" type="button" aria-label="Hiện mật khẩu" aria-pressed="false">👁</button>
+          </div>
+        </label>
       {% endif %}
       <button class="btn primary" type="button" id="withdraw-submit" data-i18n="submit_request">Gửi yêu cầu</button>
     {% endif %}
@@ -153,7 +168,12 @@
 <div class="modal" id="password-modal">
   <div class="modal-content">
     <h3 data-i18n="change_login_password">Đổi mật khẩu đăng nhập</h3>
-    <label><span data-i18n="new_password">Mật khẩu mới</span><input type="password" /></label>
+    <label><span data-i18n="new_password">Mật khẩu mới</span>
+      <div class="password-field">
+        <input type="password" />
+        <button class="password-toggle" type="button" aria-label="Hiện mật khẩu" aria-pressed="false">👁</button>
+      </div>
+    </label>
     <button class="btn primary" type="button" data-i18n="update">Cập nhật</button>
     <button class="modal-close" data-close="password-modal" data-i18n="close">Đóng</button>
   </div>
@@ -162,7 +182,12 @@
 <div class="modal" id="withdraw-password-modal">
   <div class="modal-content">
     <h3 data-i18n="create_withdraw_password">Tạo mật khẩu rút tiền</h3>
-    <label><span data-i18n="withdraw_password">Mật khẩu rút tiền</span><input type="password" id="withdraw-password-new" /></label>
+    <label><span data-i18n="withdraw_password">Mật khẩu rút tiền</span>
+      <div class="password-field">
+        <input type="password" id="withdraw-password-new" />
+        <button class="password-toggle" type="button" aria-label="Hiện mật khẩu" aria-pressed="false">👁</button>
+      </div>
+    </label>
     <button class="btn primary" type="button" id="withdraw-password-submit" data-i18n="create_password">Tạo mật khẩu</button>
     <button class="modal-close" data-close="withdraw-password-modal" data-i18n="close">Đóng</button>
   </div>
