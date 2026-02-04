@@ -2425,6 +2425,7 @@ const cskhImage = document.getElementById('cskh-image');
 const cskhChat = document.querySelector('.cskh-chat');
 if (cskhInput && cskhSend && cskhChat) {
   const endpoint = cskhChat.getAttribute('data-endpoint');
+  const deleteEndpoint = cskhChat.getAttribute('data-delete-endpoint');
   const params = new URLSearchParams(window.location.search);
   const preAmount = params.get('amount');
   const preNote = params.get('note');
@@ -2434,22 +2435,61 @@ if (cskhInput && cskhSend && cskhChat) {
     messages.forEach((msg) => {
       const bubble = document.createElement('div');
       bubble.className = `chat-message${msg.sender === 'user' ? ' user' : ''}`;
-      if (msg.text) {
-        const textNode = document.createElement('div');
-        textNode.textContent = msg.text;
-        bubble.appendChild(textNode);
+      bubble.dataset.messageId = msg.id || '';
+      if (msg.deleted && msg.deleted_by === 'user') {
+        const deletedText = document.createElement('em');
+        deletedText.className = 'muted';
+        deletedText.textContent = 'Tin nhắn đã xóa.';
+        bubble.appendChild(deletedText);
+      } else {
+        if (msg.text) {
+          const textNode = document.createElement('div');
+          textNode.textContent = msg.text;
+          bubble.appendChild(textNode);
+        }
+        if (msg.image) {
+          const img = document.createElement('img');
+          img.className = 'chat-image';
+          img.src = msg.image;
+          img.alt = 'Ảnh';
+          bubble.appendChild(img);
+        }
       }
-      if (msg.image) {
-        const img = document.createElement('img');
-        img.className = 'chat-image';
-        img.src = msg.image;
-        img.alt = 'Ảnh';
-        bubble.appendChild(img);
+      if (msg.sender === 'user') {
+        const delBtn = document.createElement('button');
+        delBtn.className = 'chat-delete-btn';
+        delBtn.type = 'button';
+        delBtn.title = 'Xóa';
+        delBtn.textContent = '🗑';
+        delBtn.setAttribute('data-message-id', msg.id || '');
+        bubble.appendChild(delBtn);
       }
       cskhChat.appendChild(bubble);
     });
     cskhChat.scrollTop = cskhChat.scrollHeight;
   };
+
+  cskhChat.addEventListener('click', async (event) => {
+    const btn = event.target.closest('.chat-delete-btn');
+    if (!btn || !deleteEndpoint) return;
+    const messageId = btn.getAttribute('data-message-id');
+    if (!messageId) return;
+    try {
+      const response = await fetch(deleteEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message_id: messageId }),
+      });
+      const data = await response.json();
+      if (response.ok && data.messages) {
+        renderMessages(data.messages);
+      } else {
+        alert(data.message || 'Không thể xóa tin nhắn.');
+      }
+    } catch {
+      alert('Không thể xóa tin nhắn.');
+    }
+  });
 
   const loadMessages = async () => {
     if (!endpoint) return;
@@ -2597,6 +2637,7 @@ if (approvalSection) {
 const adminChat = document.querySelector('.admin-chat');
 if (adminChat) {
   const replyEndpoint = adminChat.getAttribute('data-reply-endpoint');
+  const deleteEndpoint = adminChat.getAttribute('data-delete-endpoint');
   const threadItems = Array.from(adminChat.querySelectorAll('.chat-thread-item'));
   const threadCards = Array.from(adminChat.querySelectorAll('.chat-thread-card'));
 
@@ -2640,23 +2681,64 @@ if (adminChat) {
     messages.forEach((msg) => {
       const bubble = document.createElement('div');
       bubble.className = `chat-bubble ${msg.sender === 'user' ? 'user' : 'agent'}`;
-      if (msg.text) {
-        const textNode = document.createElement('div');
-        textNode.textContent = msg.text;
-        bubble.appendChild(textNode);
+      bubble.dataset.messageId = msg.id || '';
+      if (msg.deleted && msg.deleted_by === 'user') {
+        const deletedText = document.createElement('em');
+        deletedText.className = 'muted';
+        deletedText.textContent = 'Tin nhắn đã xóa.';
+        bubble.appendChild(deletedText);
+      } else {
+        if (msg.text) {
+          const textNode = document.createElement('div');
+          textNode.textContent = msg.text;
+          bubble.appendChild(textNode);
+        }
+        if (msg.image) {
+          const img = document.createElement('img');
+          img.className = 'chat-image';
+          img.src = msg.image;
+          img.alt = 'Ảnh';
+          bubble.appendChild(img);
+        }
       }
-      if (msg.image) {
-        const img = document.createElement('img');
-        img.className = 'chat-image';
-        img.src = msg.image;
-        img.alt = 'Ảnh';
-        bubble.appendChild(img);
-      }
+      const delBtn = document.createElement('button');
+      delBtn.className = 'chat-delete-btn admin-delete-msg';
+      delBtn.type = 'button';
+      delBtn.title = 'Xóa';
+      delBtn.textContent = '🗑';
+      delBtn.setAttribute('data-message-id', msg.id || '');
+      bubble.appendChild(delBtn);
       body.appendChild(bubble);
     });
   };
 
   adminChat.addEventListener('click', async (event) => {
+    const delBtn = event.target.closest('.admin-delete-msg');
+    if (delBtn && deleteEndpoint) {
+      const card = delBtn.closest('.chat-thread-card');
+      const chatId = card?.getAttribute('data-chat-id');
+      const messageId = delBtn.getAttribute('data-message-id');
+      if (!chatId || !messageId) return;
+      try {
+        const response = await fetch(deleteEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: chatId, message_id: messageId }),
+        });
+        const data = await response.json();
+        if (response.ok && data.messages) {
+          renderThreadMessages(card, data.messages);
+          const lastMsg = data.messages[data.messages.length - 1];
+          const previewText = lastMsg?.deleted ? 'Tin nhắn đã xóa.' : (lastMsg?.text || (lastMsg?.image ? '[Ảnh]' : ''));
+          updateThreadPreview(chatId, previewText);
+        } else {
+          alert(data.message || 'Không thể xóa tin nhắn.');
+        }
+      } catch {
+        alert('Không thể xóa tin nhắn.');
+      }
+      return;
+    }
     const btn = event.target.closest('.admin-reply-btn');
     if (!btn || !replyEndpoint) return;
     const card = btn.closest('.chat-thread-card');

@@ -213,11 +213,31 @@ def load_cskh_messages():
     with CSKH_PATH.open("r", encoding="utf-8") as handle:
         raw = json.load(handle)
     data = {}
+    updated = False
     for chat_id, thread in raw.items():
         if isinstance(thread, list):
-            data[chat_id] = {"user_id": "", "username": "", "messages": thread}
+            thread_obj = {"user_id": "", "username": "", "messages": thread}
         else:
-            data[chat_id] = thread
+            thread_obj = thread
+        messages = thread_obj.get("messages", []) or []
+        normalized = []
+        for msg in messages:
+            if not isinstance(msg, dict):
+                continue
+            if not msg.get("id"):
+                msg["id"] = uuid.uuid4().hex[:10]
+                updated = True
+            if "deleted" not in msg:
+                msg["deleted"] = False
+                updated = True
+            if "deleted_by" not in msg:
+                msg["deleted_by"] = ""
+                updated = True
+            normalized.append(msg)
+        thread_obj["messages"] = normalized
+        data[chat_id] = thread_obj
+    if updated:
+        save_cskh_messages(data)
     return data
 
 
@@ -978,10 +998,13 @@ def cskh_messages():
         if text or image_url:
             messages.append(
                 {
+                    "id": uuid.uuid4().hex[:10],
                     "sender": "user",
                     "text": text,
                     "image": image_url,
                     "ts": datetime.utcnow().isoformat(),
+                    "deleted": False,
+                    "deleted_by": "",
                 }
             )
             thread["messages"] = messages[-200:]
@@ -1027,16 +1050,76 @@ def admin_cskh_reply():
     messages = thread.get("messages", [])
     messages.append(
         {
+            "id": uuid.uuid4().hex[:10],
             "sender": "agent",
             "text": text,
             "image": image_url,
             "ts": datetime.utcnow().isoformat(),
+            "deleted": False,
+            "deleted_by": "",
         }
     )
     thread["messages"] = messages[-200:]
     data[chat_id] = thread
     save_cskh_messages(data)
 
+    return jsonify({"ok": True, "messages": thread.get("messages", [])})
+
+
+@app.route("/cskh/messages/delete", methods=["POST"])
+def cskh_delete_message():
+    if not current_user():
+        return jsonify({"message": "Vui lòng đăng nhập."}), 401
+    chat_id = get_chat_id()
+    payload = request.get_json(silent=True) or {}
+    message_id = (payload.get("message_id") or "").strip()
+    if not message_id:
+        return jsonify({"message": "Thiếu mã tin nhắn."}), 400
+
+    data = load_cskh_messages()
+    thread = data.get(chat_id)
+    if not thread:
+        return jsonify({"message": "Không tìm thấy cuộc trò chuyện."}), 404
+
+    messages = thread.get("messages", [])
+    target = next((m for m in messages if m.get("id") == message_id), None)
+    if not target:
+        return jsonify({"message": "Không tìm thấy tin nhắn."}), 404
+    if target.get("sender") != "user":
+        return jsonify({"message": "Không có quyền xóa."}), 403
+
+    target["deleted"] = True
+    target["deleted_by"] = "user"
+    target["text"] = ""
+    target["image"] = ""
+    thread["messages"] = messages
+    data[chat_id] = thread
+    save_cskh_messages(data)
+    return jsonify({"messages": thread.get("messages", [])})
+
+
+@app.route("/admin/cskh/delete", methods=["POST"])
+def admin_cskh_delete():
+    guard = require_admin()
+    if guard:
+        return guard
+
+    payload = request.get_json(silent=True) or {}
+    chat_id = (payload.get("chat_id") or "").strip()
+    message_id = (payload.get("message_id") or "").strip()
+    if not chat_id or not message_id:
+        return jsonify({"message": "Thiếu dữ liệu."}), 400
+
+    data = load_cskh_messages()
+    thread = data.get(chat_id)
+    if not thread:
+        return jsonify({"message": "Không tìm thấy cuộc trò chuyện."}), 404
+
+    messages = thread.get("messages", [])
+    messages = [m for m in messages if m.get("id") != message_id]
+    thread["messages"] = messages
+    data[chat_id] = thread
+    save_cskh_messages(data)
     return jsonify({"ok": True, "messages": thread.get("messages", [])})
 
 

@@ -257,7 +257,7 @@
     <p class="note" data-i18n="admin_preview_note">Dùng công cụ responsive của trình duyệt để xem mobile chi tiết.</p>
       </section>
 
-      <section class="admin-chat admin-block" id="section-cskh" data-section="section-cskh" data-reply-endpoint="{{ url_for('admin_cskh_reply') }}">
+      <section class="admin-chat admin-block" id="section-cskh" data-section="section-cskh" data-reply-endpoint="{{ url_for('admin_cskh_reply') }}" data-delete-endpoint="{{ url_for('admin_cskh_delete') }}">
     <h3 data-i18n="admin_cskh_messages">CSKH - Tin nhắn người dùng</h3>
     {% if chat_threads and chat_threads|length > 0 %}
       <div class="admin-chat-layout">
@@ -288,11 +288,16 @@
               </div>
               <div class="chat-thread-body">
                 {% for msg in thread.messages %}
-                  <div class="chat-bubble {{ 'user' if msg.sender == 'user' else 'agent' }}">
-                    {% if msg.text %}{{ msg.text }}{% endif %}
-                    {% if msg.image %}
-                      <img class="chat-image" src="{{ msg.image }}" alt="Ảnh" />
+                  <div class="chat-bubble {{ 'user' if msg.sender == 'user' else 'agent' }}" data-message-id="{{ msg.id }}">
+                    {% if msg.deleted and msg.deleted_by == 'user' %}
+                      <em class="muted">Tin nhắn đã xóa.</em>
+                    {% else %}
+                      {% if msg.text %}{{ msg.text }}{% endif %}
+                      {% if msg.image %}
+                        <img class="chat-image" src="{{ msg.image }}" alt="Ảnh" />
+                      {% endif %}
                     {% endif %}
+                    <button class="chat-delete-btn admin-delete-msg" type="button" title="Xóa">🗑</button>
                   </div>
                 {% endfor %}
               </div>

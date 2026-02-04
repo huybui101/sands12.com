@@ -14,12 +14,14 @@
 :root {
   --bg: #0b0f1e;
   --card: #121a2f;
-  --primary: #7d3cff;
-  --primary-2: #00d9ff;
+  --primary: #ffb703;
+  --primary-2: #f72585;
   --text: #eef3ff;
   --muted: #9aa7c7;
   --success: #24d08f;
   --danger: #ff4d6d;
+  --accent-green: #00e676;
+  --accent-blue: #00d9ff;
 }
 
 * {
@@ -142,7 +144,8 @@ a {
 }
 
 .btn.primary {
-  background: linear-gradient(135deg, #ff8a00, #f72585);
+  background: linear-gradient(135deg, #ffd166, #f72585);
+  box-shadow: 0 10px 22px rgba(247, 37, 133, 0.25);
 }
 
 .user-pill {
@@ -1141,11 +1144,24 @@ p, span, label, input, button, select, textarea {
   position: absolute;
   top: 12px;
   right: 12px;
-  background: none;
-  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
   color: #fff;
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.settings-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.28);
 }
 
 .wallet {
@@ -1999,6 +2015,8 @@ input:focus, select:focus, textarea:focus {
   border: 1px solid rgba(255, 255, 255, 0.08);
   display: grid;
   gap: 10px;
+  max-height: 380px;
+  overflow-y: auto;
 }
 
 .chat-message {
@@ -2006,6 +2024,7 @@ input:focus, select:focus, textarea:focus {
   padding: 10px 12px;
   border-radius: 12px;
   max-width: 70%;
+  position: relative;
 }
 
 .chat-message.user {
@@ -2250,6 +2269,8 @@ input:focus, select:focus, textarea:focus {
 .chat-thread-body {
   display: grid;
   gap: 8px;
+  max-height: 360px;
+  overflow-y: auto;
 }
 
 .chat-bubble {
@@ -2257,6 +2278,27 @@ input:focus, select:focus, textarea:focus {
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.06);
   font-size: 13px;
+  position: relative;
+}
+
+.chat-delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  border: none;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 12px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.chat-delete-btn:hover {
+  background: rgba(255, 77, 109, 0.6);
 }
 
 .chat-bubble.user {
@@ -2319,6 +2361,41 @@ input:focus, select:focus, textarea:focus {
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
   border-radius: 18px;
+}
+
+.wallet,
+.avatar-card,
+.bet-panel,
+.record-card,
+.game-card,
+.cskh-card,
+.cskh-chat,
+.admin-form,
+.stat-card,
+.game-hero {
+  border: 1px solid rgba(255, 209, 102, 0.35);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 217, 255, 0.12);
+}
+
+h1, h2, h3 {
+  color: #ffd166;
+  text-shadow: 0 6px 18px rgba(255, 193, 7, 0.18);
+}
+
+.stat-card strong,
+.amount,
+.bet-summary strong {
+  color: #ffd166;
+}
+
+.bet-panel h3,
+.bet-panel h4,
+.bet-grid-labels span {
+  color: #ffd166;
+}
+
+.bet-option span:last-child {
+  color: #00e676;
 }
 
 .bet-panel,
@@ -2473,6 +2550,35 @@ textarea::placeholder {
     min-height: 190px;
   }
 
+  .game-hero {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .game-hero-left h2 {
+    font-size: 20px;
+  }
+
+  .game-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 10px 12px;
+  }
+
+  .stat-card strong {
+    font-size: 18px;
+  }
+
+  .game-banner {
+    height: 160px;
+    border-radius: 16px;
+  }
+
   .wallet-chart {
     height: 48px;
   }
@@ -2505,12 +2611,69 @@ textarea::placeholder {
     grid-template-columns: 1fr;
   }
 
+  .cskh-chat {
+    max-height: 45vh;
+  }
+
+  .chat-thread-body {
+    max-height: 45vh;
+  }
+
   .game-grid .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .bet-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bet-panel {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .bet-header h3 {
+    font-size: 15px;
+  }
+
+  .bet-header span {
+    font-size: 12px;
+  }
+
+  .bet-roulette {
+    padding: 8px 10px;
+    border-radius: 12px;
+  }
+
+  .roulette-ball {
+    width: 28px;
+    height: 28px;
+  }
+
+  .bet-grid-labels {
+    margin-top: 10px;
+    gap: 10px;
+    font-size: 11px;
+  }
+
+  .bet-grid {
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .bet-option {
+    padding: 10px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+
+  .bet-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .bet-summary strong {
+    font-size: 13px;
   }
 }
 .app {
@@ -2597,7 +2760,8 @@ textarea::placeholder {
 }
 
 .btn.primary {
-  background: linear-gradient(135deg, #ff8a00, #f72585);
+  background: linear-gradient(135deg, #ffd166, #f72585);
+  box-shadow: 0 10px 22px rgba(247, 37, 133, 0.25);
 }
 
 .user-pill {
