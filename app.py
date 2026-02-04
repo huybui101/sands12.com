@@ -1112,6 +1112,17 @@ def admin():
         return guard
     config = load_site_config()
     games = load_games()
+    bets = load_bets()
+    bet_query = (request.args.get("bet_user") or "").strip()
+    if bet_query:
+        lowered = bet_query.lower()
+        bets = [
+            bet
+            for bet in bets
+            if lowered in str(bet.get("username", "")).lower()
+            or lowered in str(bet.get("user_id", "")).lower()
+        ]
+    bets = sorted(bets, key=lambda item: item.get("created_at", ""), reverse=True)
 
     if request.method == "POST":
         section = request.form.get("section")
@@ -1344,6 +1355,8 @@ def admin():
         users=users,
         total_balance=total_balance,
         transactions=transactions,
+        bets=bets,
+        bet_query=bet_query,
     )
 
 

@@ -20,6 +20,7 @@
         <a class="menu-pill" href="#section-home" data-section="section-home" data-i18n="admin_menu_home">TRANG CHỦ</a>
         <a class="menu-pill" href="#section-stats" data-section="section-stats" data-i18n="admin_menu_stats">THỐNG KÊ</a>
         <a class="menu-pill" href="#section-users" data-section="section-users" data-i18n="admin_menu_users">TÀI KHOẢN KHÁCH</a>
+        <a class="menu-pill" href="#section-bets" data-section="section-bets">LỊCH SỬ CƯỢC</a>
         <a class="menu-pill" href="#section-approval" data-section="section-approval" data-i18n="admin_menu_approval">DUYỆT NẠP RÚT</a>
         <a class="menu-pill" href="#section-banks" data-section="section-banks" data-i18n="admin_menu_banks">THÔNG TIN NGÂN HÀNG</a>
         <a class="menu-pill" href="#section-cskh" data-section="section-cskh" data-i18n="admin_menu_cskh">CSKH ADMIN</a>
@@ -211,6 +212,40 @@
         <a class="btn ghost" href="{{ url_for('home') }}" data-i18n="admin_link_home">Link trang chủ người dùng</a>
         <a class="btn" href="{{ url_for('admin') }}" data-i18n="admin_link_admin">Link hậu đài chỉnh sửa</a>
         <a class="btn ghost" href="{{ url_for('admin_logout') }}" data-i18n="admin_logout">Đăng xuất hậu đài</a>
+      </section>
+
+      <section class="admin-placeholder admin-block" id="section-bets" data-section="section-bets">
+    <h3>Lịch sử cá cược</h3>
+    <form class="inline-form" method="get" action="{{ url_for('admin') }}">
+      <label><span>Tài khoản/ID</span>
+        <input type="text" name="bet_user" placeholder="Tìm theo tài khoản hoặc ID" value="{{ bet_query or '' }}" />
+      </label>
+      <button class="btn primary" type="submit">Lọc</button>
+    </form>
+    <div class="admin-table">
+      <div class="table-row header seven">
+        <span>ID cược</span>
+        <span>Tài khoản</span>
+        <span>Trò chơi</span>
+        <span>Cửa</span>
+        <span>Số tiền</span>
+        <span>Trạng thái</span>
+        <span>Thời gian</span>
+      </div>
+      {% for bet in bets %}
+        <div class="table-row seven">
+          <span>{{ bet.id }}</span>
+          <span>{{ bet.username if bet.username else bet.user_id }}</span>
+          <span>{{ bet.game_slug }}</span>
+          <span>{{ (bet.selections or [])|join(', ') }}</span>
+          <span>{{ bet.total_stake if bet.total_stake is defined else bet.amount }}$</span>
+          <span>{{ bet.status }}{% if bet.outcome %} · {{ bet.outcome }}{% endif %}</span>
+          <span>{{ bet.created_at }}</span>
+        </div>
+      {% else %}
+        <div class="muted">Chưa có cược.</div>
+      {% endfor %}
+    </div>
       </section>
 
       <section class="admin-preview admin-block" id="section-theme" data-section="section-theme">
