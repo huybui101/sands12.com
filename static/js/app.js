@@ -36,6 +36,10 @@ passwordToggles.forEach((btn) => {
     const input = field ? field.querySelector('input') : null;
     if (!input) return;
     const isHidden = input.type === 'password';
+    if (isHidden && !input.value) {
+      const stored = input.getAttribute('data-password') || '';
+      if (stored) input.value = stored;
+    }
     input.type = isHidden ? 'text' : 'password';
     btn.setAttribute('aria-pressed', String(isHidden));
     btn.setAttribute('aria-label', isHidden ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
