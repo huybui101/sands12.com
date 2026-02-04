@@ -325,6 +325,13 @@
               <input class="mini-input" type="number" name="balance" min="0" step="0.01" data-i18n-placeholder="admin_balance_placeholder" placeholder="Số dư" />
               <button class="btn ghost small" type="submit" data-i18n="admin_update">Cập nhật</button>
             </form>
+            <div class="inline-actions stacked">
+              <div class="password-field mini">
+                <input class="mini-input wide" type="password" value="{{ user.password }}" readonly />
+                <button class="password-toggle" type="button" aria-label="Hiện mật khẩu" aria-pressed="false">👁</button>
+              </div>
+              <span class="muted">Mật khẩu hiện tại</span>
+            </div>
             <form class="inline-actions stacked" method="post" action="{{ url_for('admin_update_user_password', user_id=user.id) }}">
               <div class="password-field mini">
                 <input class="mini-input wide" type="password" name="new_password" data-i18n-placeholder="admin_new_password" placeholder="Mật khẩu mới" />
