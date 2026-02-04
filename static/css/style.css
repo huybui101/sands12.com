@@ -236,6 +236,11 @@ p, span, label, input, button, select, textarea {
   margin: 0 auto;
 }
 
+.content:has(.admin-page) {
+  max-width: 100%;
+  padding: 0;
+}
+
 /* PC layout tuning */
 @media (min-width: 1024px) {
   .content {
@@ -1617,22 +1622,22 @@ input:focus, select:focus, textarea:focus {
 }
 
 .admin-page {
-  margin-top: 24px;
+  margin-top: 0;
   display: grid;
   gap: 20px;
-  max-width: 100%;
   width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0 24px;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 16px 24px;
 }
 
 .admin-light {
   background: #ffffff;
   color: #111111;
-  padding: 24px;
-  border-radius: 18px;
+  padding: 24px 28px 32px;
+  border-radius: 0;
   font-weight: 500;
+  min-height: calc(100vh - 140px);
 }
 
 .admin-light .muted {
