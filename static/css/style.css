@@ -2387,13 +2387,22 @@ textarea::placeholder {
   }
 
   .wallet-summary {
-    flex-direction: column;
+    flex-direction: row;
     align-items: stretch;
   }
 
   .wallet-summary > div,
   .wallet-stats {
     width: 100%;
+    flex: 1;
+  }
+
+  .wallet-summary > div {
+    text-align: left;
+  }
+
+  .wallet-stats {
+    text-align: right;
   }
 
   .wallet-actions {
