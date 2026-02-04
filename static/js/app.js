@@ -2285,10 +2285,9 @@ if (countdownEl && resultText) {
     }, 3000);
   };
 
-  const updateRoundCount = () => {
+  const updateRoundCount = (roundIndex) => {
     if (roundCountEl) {
-      const nextRound = Math.floor(100 + Math.random() * 900);
-      roundCountEl.textContent = String(nextRound);
+      roundCountEl.textContent = String(roundIndex ?? Math.floor(getVietnamNowMs() / roundMs));
     }
   };
 
@@ -2303,7 +2302,8 @@ if (countdownEl && resultText) {
 
   const resolveRound = () => {
     startRouletteSpin();
-    updateRoundCount();
+    const currentRoundIndex = Math.floor(getVietnamNowMs() / roundMs);
+    updateRoundCount(currentRoundIndex);
     const options = Array.from(document.querySelectorAll('.bet-option'));
     if (!options.length) return;
     const betInfo = loadCurrentBetInfo();
@@ -2359,7 +2359,7 @@ if (countdownEl && resultText) {
               `Kết quả: ${outcomeName} (odds ${odds}) - ${netLabel}`
             );
             showResultOverlay({
-              outcome: outcomeName,
+              outcome: `${outcomeName} · Vòng ${currentRoundIndex}`,
               netText: netLabel,
               isWin: totalNet >= 0,
             });
@@ -2385,7 +2385,7 @@ if (countdownEl && resultText) {
         });
     } else {
       resultText.textContent = `Kết quả: ${outcomeName} (odds ${odds})`;
-          showResultOverlay({ outcome: outcomeName, netText: '' });
+      showResultOverlay({ outcome: `${outcomeName} · Vòng ${currentRoundIndex}`, netText: '' });
       resetBetState();
     }
   };
@@ -2394,6 +2394,7 @@ if (countdownEl && resultText) {
     const vnNow = getVietnamNowMs();
     const roundIndex = Math.floor(vnNow / roundMs);
     updateCountdownDisplay();
+    updateRoundCount(roundIndex);
 
     if (
       currentBetIds.length &&
