@@ -332,8 +332,8 @@ def get_bet_pairs(config=None):
             if isinstance(pair, dict):
                 left = str(pair.get("left", "")).strip()
                 right = str(pair.get("right", "")).strip()
-        "odds_low": 1.98,
-        "odds_high": 1.98,
+            elif isinstance(pair, (list, tuple)) and len(pair) >= 2:
+                left = str(pair[0]).strip()
                 right = str(pair[1]).strip()
             if left and right:
                 cleaned.append({"left": left, "right": right})
