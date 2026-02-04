@@ -1878,6 +1878,7 @@ const betNetEl = document.getElementById('bet-net');
 const balanceWarningEl = document.getElementById('balance-warning');
 const betBalanceAfterEl = document.getElementById('bet-balance-after');
 const betMaxPerDoorEl = document.getElementById('bet-max-per-door');
+const rouletteEl = document.querySelector('.bet-roulette');
 
 const t = (key, args, fallback) => window.getTranslation?.(key, args, fallback) || fallback || key;
 
@@ -1906,6 +1907,7 @@ let isSettlingBet = false;
 let settleRetryTimer = null;
 let pendingOutcomeName = null;
 let pendingOutcomeOdds = null;
+let rouletteTimer = null;
 const currentBetKey = 'currentBetInfo';
 
 const loadCurrentBetInfo = () => {
@@ -1956,6 +1958,46 @@ const parseAmount = (value) => {
   const numeric = Number(String(value || '').replace(',', '.'));
   if (!Number.isFinite(numeric) || numeric <= 0) return 0;
   return Math.round(numeric * 100) / 100;
+};
+
+const ensureResultOverlay = () => {
+  let overlay = document.querySelector('.result-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.className = 'result-overlay';
+    overlay.innerHTML = `
+      <div class="result-card">
+        <h4>${t('result', null, 'Kết quả')}</h4>
+        <div class="result-outcome"></div>
+        <div class="result-net"></div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  }
+  return overlay;
+};
+
+const showResultOverlay = ({ outcome, netText, isWin }) => {
+  const overlay = ensureResultOverlay();
+  const outcomeEl = overlay.querySelector('.result-outcome');
+  const netEl = overlay.querySelector('.result-net');
+  if (outcomeEl) outcomeEl.textContent = outcome || '';
+  if (netEl) {
+    netEl.textContent = netText || '';
+    netEl.classList.toggle('win', !!isWin);
+    netEl.classList.toggle('lose', isWin === false);
+  }
+  overlay.classList.add('active');
+  setTimeout(() => overlay.classList.remove('active'), 2000);
+};
+
+const startRouletteSpin = () => {
+  if (!rouletteEl) return;
+  rouletteEl.classList.add('spinning');
+  if (rouletteTimer) clearTimeout(rouletteTimer);
+  rouletteTimer = setTimeout(() => {
+    rouletteEl.classList.remove('spinning');
+  }, 2200);
 };
 
 let isAutoSettingAmount = false;
@@ -2260,6 +2302,7 @@ if (countdownEl && resultText) {
   };
 
   const resolveRound = () => {
+    startRouletteSpin();
     updateRoundCount();
     const options = Array.from(document.querySelectorAll('.bet-option'));
     if (!options.length) return;
@@ -2315,6 +2358,11 @@ if (countdownEl && resultText) {
               { outcome: outcomeName, odds, net: netLabel },
               `Kết quả: ${outcomeName} (odds ${odds}) - ${netLabel}`
             );
+            showResultOverlay({
+              outcome: outcomeName,
+              netText: netLabel,
+              isWin: totalNet >= 0,
+            });
             showBetToast(`Kết quả: ${outcomeName} - ${netLabel}`, true);
             resetBetState();
           } else {
@@ -2337,6 +2385,7 @@ if (countdownEl && resultText) {
         });
     } else {
       resultText.textContent = `Kết quả: ${outcomeName} (odds ${odds})`;
+          showResultOverlay({ outcome: outcomeName, netText: '' });
       resetBetState();
     }
   };

@@ -2388,7 +2388,12 @@ textarea::placeholder {
 
   .wallet-summary {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+  }
+
+  .wallet-summary > div,
+  .wallet-stats {
+    width: 100%;
   }
 
   .wallet-actions {
@@ -2436,11 +2441,6 @@ textarea::placeholder {
 
   .game-card {
     min-height: 190px;
-  }
-
-  .wallet-summary {
-    flex-direction: column;
-    align-items: flex-start;
   }
 
   .wallet-chart {
@@ -2882,6 +2882,97 @@ textarea::placeholder {
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
+.bet-roulette {
+  margin: 12px 0 6px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.roulette-track {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  align-items: center;
+}
+
+.roulette-ball {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ffffff, #6cc7ff 45%, #1a66ff 70%);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25), inset 0 -4px 10px rgba(0, 0, 0, 0.25);
+  justify-self: center;
+  animation: floatBall 3.2s ease-in-out infinite;
+}
+
+.ball-2 { animation-delay: 0.2s; }
+.ball-3 { animation-delay: 0.4s; }
+.ball-4 { animation-delay: 0.6s; }
+.ball-5 { animation-delay: 0.8s; }
+.ball-6 { animation-delay: 1s; }
+
+.bet-roulette.spinning .roulette-ball {
+  animation: spinBall 0.9s linear infinite;
+}
+
+@keyframes floatBall {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes spinBall {
+  0% { transform: translateY(0) rotate(0deg) scale(1); }
+  50% { transform: translateY(-6px) rotate(180deg) scale(1.05); }
+  100% { transform: translateY(0) rotate(360deg) scale(1); }
+}
+
+.result-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 12, 24, 0.72);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 20px;
+}
+
+.result-overlay.active {
+  display: flex;
+}
+
+.result-card {
+  background: rgba(12, 18, 36, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 18px 20px;
+  min-width: min(320px, 92vw);
+  text-align: center;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.35);
+}
+
+.result-card h4 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+.result-card .result-outcome {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.result-card .result-net {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.result-card .result-net.win { color: #00e676; }
+.result-card .result-net.lose { color: #ff5252; }
+
 .bet-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2943,219 +3034,6 @@ textarea::placeholder {
 
 .bet-footer .note {
   color: var(--muted);
-}
-
-.mine-header {
-  margin-top: 16px;
-}
-
-.avatar-card {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 20px;
-  align-items: center;
-  background: var(--card);
-  padding: 18px;
-  border-radius: 18px;
-  position: relative;
-}
-
-.avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-}
-
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.avatar-placeholder {
-  font-size: 32px;
-  color: var(--muted);
-}
-
-.avatar-form {
-  display: grid;
-  gap: 8px;
-}
-
-.settings-btn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 20px;
-  cursor: pointer;
-}
-
-.wallet {
-  margin-top: 20px;
-  display: grid;
-  gap: 14px;
-  background: var(--card);
-  padding: 18px;
-  border-radius: 18px;
-}
-
-.wallet-summary {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.wallet-stats {
-  color: var(--muted);
-  display: grid;
-  gap: 6px;
-}
-
-.wallet-chart {
-  display: grid;
-  grid-auto-flow: column;
-  gap: 8px;
-  align-items: end;
-  height: 60px;
-}
-
-.chart-bar {
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  position: relative;
-  overflow: hidden;
-}
-
-.chart-bar::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 60%;
-  background: linear-gradient(180deg, var(--primary-2), var(--primary));
-}
-
-.wallet-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.records {
-  margin-top: 20px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 12px;
-}
-
-.form-grid.compact {
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-}
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 14px;
-}
-
-.game-preview-card {
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 16px;
-  padding: 12px;
-  display: grid;
-  gap: 8px;
-}
-
-.preview-title {
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.preview-image {
-  height: 90px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.preview-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 12px;
-}
-
-.record-card {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 14px;
-  border-radius: 14px;
-}
-
-.bank-link {
-  margin-top: 20px;
-  background: var(--card);
-  padding: 18px;
-  border-radius: 18px;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 12px;
-}
-
-label {
-  display: grid;
-  gap: 6px;
-  font-size: 14px;
-}
-
-input, select, textarea {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #fff;
-  padding: 10px 12px;
-  border-radius: 10px;
-}
-
-.notice {
-  margin-top: 12px;
-  color: var(--muted);
-}
-
-.auth-page {
-  display: grid;
-  place-items: center;
-  padding: 40px 0;
-}
-
-.auth-card {
-  background: var(--card);
-  padding: 24px;
-  border-radius: 18px;
-  width: min(420px, 90%);
-  display: grid;
-  gap: 12px;
-}
-
-.otp-row {
-  display: flex;
-  gap: 10px;
 }
 
 .modal {
