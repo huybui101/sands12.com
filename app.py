@@ -1,5 +1,6 @@
 import json
 import os
+import random
 import re
 import shutil
 import uuid
@@ -304,6 +305,72 @@ def find_user_by_username(username):
         if user.get("username") == username:
             return user
     return None
+
+
+def generate_user_id():
+    while True:
+        candidate = f"{random.randint(100000, 999999)}"
+        if candidate not in USERS:
+            return candidate
+
+
+def migrate_user_ids():
+    global USERS
+    invalid_ids = [uid for uid in list(USERS.keys()) if not re.fullmatch(r"\d{6}", str(uid))]
+    if not invalid_ids:
+        return
+
+    used_ids = set(str(uid) for uid in USERS.keys())
+    id_map = {}
+    for old_id in invalid_ids:
+        while True:
+            new_id = f"{random.randint(100000, 999999)}"
+            if new_id not in used_ids:
+                used_ids.add(new_id)
+                id_map[old_id] = new_id
+                break
+
+    for old_id, new_id in id_map.items():
+        user = USERS.pop(old_id, None)
+        if not user:
+            continue
+        user["id"] = new_id
+        USERS[new_id] = user
+
+    bets = load_bets()
+    bets_changed = False
+    for bet in bets:
+        old_id = bet.get("user_id")
+        if old_id in id_map:
+            bet["user_id"] = id_map[old_id]
+            bets_changed = True
+    if bets_changed:
+        save_bets(bets)
+
+    transactions = load_transactions()
+    tx_changed = False
+    for tx in transactions:
+        old_id = tx.get("user_id")
+        if old_id in id_map:
+            tx["user_id"] = id_map[old_id]
+            tx_changed = True
+    if tx_changed:
+        save_transactions(transactions)
+
+    cskh_data = load_cskh_messages()
+    cskh_changed = False
+    for thread in cskh_data.values():
+        old_id = thread.get("user_id")
+        if old_id in id_map:
+            thread["user_id"] = id_map[old_id]
+            cskh_changed = True
+    if cskh_changed:
+        save_cskh_messages(cskh_data)
+
+    save_users(USERS)
+
+
+migrate_user_ids()
 
 
 def get_user_odds(user, game_slug, default_config=None):
@@ -1156,7 +1223,7 @@ def register():
         if any(user["username"] == username for user in USERS.values()):
             flash("Tài khoản đã tồn tại.", "error")
             return redirect(url_for("register"))
-        user_id = uuid.uuid4().hex[:10]
+        user_id = generate_user_id()
         USERS[user_id] = {
             "id": user_id,
             "username": username,
@@ -1665,6 +1732,9 @@ def admin_update_user_id(user_id):
     new_id = (request.form.get("new_user_id") or "").strip()
     if not new_id:
         flash("Vui lòng nhập ID mới.", "error")
+        return redirect(url_for("admin"))
+    if not re.fullmatch(r"\d{6}", new_id):
+        flash("ID mới phải gồm 6 chữ số.", "error")
         return redirect(url_for("admin"))
     if new_id in USERS and new_id != user_id:
         flash("ID mới đã tồn tại.", "error")
