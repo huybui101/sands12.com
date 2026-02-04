@@ -302,21 +302,23 @@
       <section class="admin-placeholder admin-block" id="section-users" data-section="section-users">
     <h3 data-i18n="admin_users">Tài khoản khách</h3>
     <div class="admin-table">
-      <div class="table-row header six">
+      <div class="table-row header seven">
         <span data-i18n="admin_col_id">ID</span>
         <span data-i18n="admin_col_name">Tên</span>
         <span data-i18n="admin_col_balance">Số dư</span>
         <span data-i18n="admin_col_status">Trạng thái</span>
         <span data-i18n="admin_col_created">Ngày tạo</span>
+        <span>Mật khẩu</span>
         <span data-i18n="admin_col_actions">Thao tác</span>
       </div>
       {% for user in users %}
-        <div class="table-row six">
+        <div class="table-row seven">
           <span>{{ user.id }}</span>
           <span>{{ user.username }}</span>
           <span>{{ user.balance }}$</span>
           <span>{{ user.status if user.status else 'active' }}</span>
           <span>{{ user.created_at }}</span>
+          <span class="admin-password-plain">{{ user.password if user.password else 'Chưa có' }}</span>
           <span>
             <form class="inline-actions" method="post" action="{{ url_for('admin_toggle_user', user_id=user.id) }}">
               <button class="btn ghost small" type="submit">{{ 'Mở' if user.status == 'locked' else 'Khóa' }}</button>
@@ -325,14 +327,6 @@
               <input class="mini-input" type="number" name="balance" min="0" step="0.01" data-i18n-placeholder="admin_balance_placeholder" placeholder="Số dư" />
               <button class="btn ghost small" type="submit" data-i18n="admin_update">Cập nhật</button>
             </form>
-            <div class="inline-actions stacked">
-              <div class="muted">Mật khẩu người dùng</div>
-              <div class="password-field mini">
-                <input class="mini-input wide" type="text" value="{{ user.password if user.password else 'Chưa có' }}" data-password="{{ user.password if user.password else '' }}" readonly />
-                <button class="password-toggle" type="button" aria-label="Ẩn mật khẩu" aria-pressed="true">🙈</button>
-              </div>
-              <div class="admin-password-plain">Mật khẩu: {{ user.password if user.password else 'Chưa có' }}</div>
-            </div>
             <form class="inline-actions stacked" method="post" action="{{ url_for('admin_update_user_password', user_id=user.id) }}">
               <div class="muted">Đổi mật khẩu</div>
               <div class="password-field mini">

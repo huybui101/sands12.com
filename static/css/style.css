@@ -1751,6 +1751,10 @@ input:focus, select:focus, textarea:focus {
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
+.table-row.seven {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
 .table-row.header {
   font-weight: 700;
   background: #ffffff;
