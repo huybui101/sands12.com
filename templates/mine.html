@@ -17,7 +17,10 @@
     <div class="avatar-info">
       {% if user %}
         <h3>{{ user.username }}</h3>
-        <p><span data-i18n="user_id_label">ID</span>: {{ user.id }}</p>
+        <div class="user-id-badge">
+          <span data-i18n="user_id_label">ID</span>
+          <strong>{{ user.id[-4:] if user.id else '' }}</strong>
+        </div>
       {% else %}
         <p data-i18n="please_login">Vui lòng đăng nhập để xem thông tin.</p>
       {% endif %}
