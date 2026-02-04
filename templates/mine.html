@@ -19,7 +19,7 @@
         <h3>{{ user.username }}</h3>
         <div class="user-id-badge">
           <span data-i18n="user_id_label">ID</span>
-          <strong>{{ user.id[-4:] if user.id else '' }}</strong>
+          <strong>{{ user.id if user.id else '' }}</strong>
         </div>
       {% else %}
         <p data-i18n="please_login">Vui lòng đăng nhập để xem thông tin.</p>
