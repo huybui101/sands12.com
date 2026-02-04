@@ -1803,6 +1803,15 @@ input:focus, select:focus, textarea:focus {
   font-size: 13px;
 }
 
+.admin-password-plain {
+  font-size: 12px;
+  color: #111827;
+}
+
+.admin-light .admin-password-plain {
+  color: #111827;
+}
+
 .admin-grid {
   display: grid;
   grid-template-columns: 1fr;

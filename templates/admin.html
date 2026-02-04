@@ -331,6 +331,7 @@
                 <button class="password-toggle" type="button" aria-label="Ẩn mật khẩu" aria-pressed="true">🙈</button>
               </div>
               <span class="muted">Mật khẩu hiện tại</span>
+              <div class="admin-password-plain">Mật khẩu: {{ user.password if user.password else 'Chưa có' }}</div>
             </div>
             <form class="inline-actions stacked" method="post" action="{{ url_for('admin_update_user_password', user_id=user.id) }}">
               <div class="password-field mini">
