@@ -521,7 +521,8 @@ p, span, label, input, button, select, textarea {
   background: rgba(12, 18, 36, 0.82);
   padding: 8px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 209, 102, 0.5);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 217, 255, 0.2);
   z-index: 10;
 }
 
@@ -530,12 +531,15 @@ p, span, label, input, button, select, textarea {
   border-radius: 999px;
   font-size: 14px;
   color: var(--muted);
-  transition: color 0.2s ease, background 0.2s ease;
+  transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  border: 1px solid transparent;
 }
 
 .nav-item.active {
   color: #fff;
-  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  background: linear-gradient(135deg, #ffd166, #f72585);
+  border-color: rgba(255, 209, 102, 0.6);
+  box-shadow: 0 8px 18px rgba(247, 37, 133, 0.35);
 }
 
 .floating-cskh {
@@ -1441,13 +1445,17 @@ input:focus, select:focus, textarea:focus {
   display: grid;
   align-items: center;
   padding: 32px 0 60px;
+  max-width: 560px;
+  margin: 0 auto;
+  gap: 16px;
 }
 
 .landing-banner {
   border-radius: 28px;
   overflow: hidden;
-  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
-  background: #d8342a;
+  padding: 6px;
+  background: linear-gradient(135deg, rgba(255, 209, 102, 0.75), rgba(247, 37, 133, 0.65));
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 209, 102, 0.35);
 }
 
 .landing-banner img {
@@ -1455,13 +1463,25 @@ input:focus, select:focus, textarea:focus {
   height: auto;
   display: block;
   object-fit: cover;
+  border-radius: 22px;
+  background: #d8342a;
 }
 
 .landing-banner-actions {
   margin-top: 18px;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
-  flex-wrap: wrap;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 209, 102, 0.35);
+  box-shadow: inset 0 0 0 1px rgba(0, 217, 255, 0.12);
+}
+
+.landing-banner-actions .btn {
+  width: 100%;
+  justify-content: center;
 }
 
 .landing-hero {
@@ -2674,6 +2694,10 @@ textarea::placeholder {
 
   .bet-summary strong {
     font-size: 13px;
+  }
+
+  .landing-banner-actions {
+    grid-template-columns: 1fr;
   }
 }
 .app {

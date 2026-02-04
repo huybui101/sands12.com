@@ -379,6 +379,10 @@
               <input class="mini-input wide" type="datetime-local" name="created_at" value="{{ (user.created_at or '')|replace(' ', 'T') }}" />
               <button class="btn ghost small" type="submit">Sửa thời gian tạo</button>
             </form>
+            <form class="inline-actions stacked" method="post" action="{{ url_for('admin_update_user_id', user_id=user.id) }}">
+              <input class="mini-input wide" type="text" name="new_user_id" placeholder="ID mới" />
+              <button class="btn ghost small" type="submit">Đổi ID</button>
+            </form>
             <form class="inline-actions stacked" method="post" action="{{ url_for('admin_update_user_bank', user_id=user.id) }}">
               <select class="mini-input wide" name="bank_name">
                 <option value="" data-i18n="admin_bank_name">Chọn ngân hàng</option>

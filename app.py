@@ -1652,6 +1652,56 @@ def admin_update_user_created_at(user_id):
     return redirect(url_for("admin"))
 
 
+@app.route("/admin/users/<user_id>/id", methods=["POST"])
+def admin_update_user_id(user_id):
+    guard = require_admin()
+    if guard:
+        return guard
+    user = USERS.get(user_id)
+    if not user:
+        flash("Không tìm thấy người dùng.", "error")
+        return redirect(url_for("admin"))
+
+    new_id = (request.form.get("new_user_id") or "").strip()
+    if not new_id:
+        flash("Vui lòng nhập ID mới.", "error")
+        return redirect(url_for("admin"))
+    if new_id in USERS and new_id != user_id:
+        flash("ID mới đã tồn tại.", "error")
+        return redirect(url_for("admin"))
+
+    old_id = user_id
+    if new_id == old_id:
+        flash("ID không thay đổi.", "error")
+        return redirect(url_for("admin"))
+
+    user["id"] = new_id
+    USERS.pop(old_id, None)
+    USERS[new_id] = user
+
+    bets = load_bets()
+    for bet in bets:
+        if bet.get("user_id") == old_id:
+            bet["user_id"] = new_id
+    save_bets(bets)
+
+    transactions = load_transactions()
+    for tx in transactions:
+        if tx.get("user_id") == old_id:
+            tx["user_id"] = new_id
+    save_transactions(transactions)
+
+    cskh_data = load_cskh_messages()
+    for thread in cskh_data.values():
+        if thread.get("user_id") == old_id:
+            thread["user_id"] = new_id
+    save_cskh_messages(cskh_data)
+
+    save_users(USERS)
+    flash("Đã cập nhật ID tài khoản.", "success")
+    return redirect(url_for("admin"))
+
+
 @app.route("/admin/users/odds", methods=["POST"])
 def admin_update_user_odds():
     guard = require_admin()

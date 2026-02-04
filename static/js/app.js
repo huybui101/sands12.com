@@ -2353,6 +2353,9 @@ if (countdownEl && resultText) {
             const netLabel = totalNet >= 0
               ? t('bet_net_win', { amount: formatMoney(totalNet) }, `Lãi +${formatMoney(totalNet)}$`)
               : t('bet_net_lose', { amount: formatMoney(Math.abs(totalNet)) }, `Lỗ -${formatMoney(Math.abs(totalNet))}$`);
+            const netToast = totalNet >= 0
+              ? `Cộng tiền +${formatMoney(totalNet)}$`
+              : `Trừ tiền -${formatMoney(Math.abs(totalNet))}$`;
             resultText.textContent = t(
               'bet_result_template',
               { outcome: outcomeName, odds, net: netLabel },
@@ -2363,7 +2366,7 @@ if (countdownEl && resultText) {
               netText: netLabel,
               isWin: totalNet >= 0,
             });
-            showBetToast(`Kết quả: ${outcomeName} - ${netLabel}`, true);
+            showBetToast(netToast, totalNet >= 0);
             resetBetState();
           } else {
             const first = results[0];
