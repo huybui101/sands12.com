@@ -3,10 +3,10 @@
   "logo": "/static/images/logo.jpg",
   "landing_banner": "/static/images/landing-register.png",
   "hero_images": [
-    "/uploads/hero-1.jpg",
-    "/uploads/hero-2.jpg",
-    "/uploads/hero-3.jpg",
-    "/uploads/hero-4.jpg"
+    "/static/images/hero-1.jpg",
+    "/static/images/hero-2.jpg",
+    "/static/images/hero-3.jpg",
+    "/static/images/hero-4.jpg"
   ],
   "marquee": [
     "Nguyễn D vừa thắng 340$ tại Phi Thuyền May Mắn",
