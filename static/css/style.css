@@ -1440,6 +1440,24 @@ input:focus, select:focus, textarea:focus {
   gap: 12px;
 }
 
+.auth-card .note {
+  display: block;
+  margin-top: 6px;
+}
+
+.auth-card .btn.primary {
+  margin-top: 8px;
+}
+
+.auth-card p {
+  margin-top: 6px;
+}
+
+.auth-card p a {
+  color: var(--primary);
+  font-weight: 600;
+}
+
 .otp-row {
   display: flex;
   gap: 10px;

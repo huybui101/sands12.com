@@ -188,7 +188,50 @@ def load_site_config():
     if not SITE_CONFIG_PATH.exists():
         save_site_config(default_site_config())
     with SITE_CONFIG_PATH.open("r", encoding="utf-8") as handle:
-        return json.load(handle)
+        config = json.load(handle)
+    updated = False
+    defaults = default_site_config()
+    for key, value in defaults.items():
+        if key not in config:
+            config[key] = value
+            updated = True
+
+    hero_images = config.get("hero_images")
+    valid_heroes = []
+    if isinstance(hero_images, list):
+        for path in hero_images:
+            if not isinstance(path, str) or not path.strip():
+                continue
+            if path.startswith("/uploads/"):
+                candidate = UPLOAD_DIR / path.replace("/uploads/", "", 1)
+                if candidate.exists():
+                    valid_heroes.append(path)
+            elif path.startswith("/static/"):
+                candidate = BASE_DIR / path.lstrip("/")
+                if candidate.exists():
+                    valid_heroes.append(path)
+            else:
+                valid_heroes.append(path)
+
+    if not valid_heroes:
+        fallback = [
+            "/static/images/hero-1.jpg",
+            "/static/images/hero-2.jpg",
+            "/static/images/hero-3.jpg",
+            "/static/images/hero-4.jpg",
+        ]
+        for path in fallback:
+            candidate = BASE_DIR / path.lstrip("/")
+            if candidate.exists():
+                valid_heroes.append(path)
+
+    if valid_heroes and valid_heroes != hero_images:
+        config["hero_images"] = valid_heroes
+        updated = True
+
+    if updated:
+        save_site_config(config)
+    return config
 
 
 def save_site_config(config):
@@ -1215,8 +1258,12 @@ def register():
         USERS = load_users()
         username = request.form.get("username")
         password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
         phone = request.form.get("phone")
         otp = request.form.get("otp")
+        if not password or not confirm_password or password != confirm_password:
+            flash("Mật khẩu và xác nhận mật khẩu không khớp.", "error")
+            return redirect(url_for("register"))
         if not otp or len(otp) != 6:
             flash("Mã xác thực phải gồm 6 chữ số.", "error")
             return redirect(url_for("register"))
