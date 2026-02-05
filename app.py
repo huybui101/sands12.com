@@ -64,7 +64,7 @@ GAMES_DEFAULT = [
     {"name": "May Mắn Đến", "slug": "may-man-den", "category": "casino"},
     {"name": "Ngôi Sao May Mắn", "slug": "ngoi-sao-may-man", "category": "casino"},
     {"name": "Xổ Số Đếm Ngược", "slug": "so-xo-dem-nguoc", "category": "casino"},
-    {"name": "Rất Vui", "slug": "rat-vui", "category": "casino"},
+    {"name": "Mini game", "slug": "rat-vui", "category": "casino"},
     {"name": "Nhanh Lên Xổ Số", "slug": "nhanh-len-so-xo", "category": "casino"},
     {"name": "Nhanh 1", "slug": "nhanh-1", "category": "casino"},
     {"name": "Singapore PK 10", "slug": "singapore-pk-10", "category": "casino"},
