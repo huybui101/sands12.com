@@ -94,16 +94,16 @@
     }
   ],
   "game_images": {
-    "phi-thuyen-may-man": "/static/images/bet-1.jpg",
-    "may-man-den": "/static/images/bet-2.jpg",
-    "ngoi-sao-may-man": "/static/images/bet-3.jpg",
-    "so-xo-dem-nguoc": "/static/images/bet-4.jpg",
-    "rat-vui": "/static/images/bet-5.jpg",
-    "nhanh-len-so-xo": "/static/images/bet-1.jpg",
-    "nhanh-1": "/static/images/bet-2.jpg",
-    "singapore-pk-10": "/static/images/bet-3.jpg",
-    "cuoc-hanh-phuc": "/static/images/bet-4.jpg",
-    "so-xo-singapore": "/static/images/bet-5.jpg"
+    "phi-thuyen-may-man": "/static/images/game-phi-thuyen-may-man.jpg",
+    "may-man-den": "/static/images/game-may-man-den.jpg",
+    "ngoi-sao-may-man": "/static/images/game-ngoi-sao-may-man.jpg",
+    "so-xo-dem-nguoc": "/static/images/game-so-xo-dem-nguoc.jpg",
+    "rat-vui": "/static/images/game-mini-game.jpg",
+    "nhanh-len-so-xo": "/static/images/game-nhanh-len-so-xo.jpg",
+    "nhanh-1": "/static/images/game-nhanh-1.jpg",
+    "singapore-pk-10": "/static/images/game-singapore-pk-10.jpg",
+    "cuoc-hanh-phuc": "/static/images/game-cuoc-hanh-phuc.jpg",
+    "so-xo-singapore": "/static/images/game-so-xo-singapore.jpg"
   },
   "theme_primary": "#f5c542",
   "theme_accent": "#ffdf85",
