@@ -90,14 +90,6 @@
     </div>
   </div>
 
-  <div class="bet-history-cta">
-    <div>
-      <strong data-i18n="bet_history">Lịch sử cược</strong>
-      <div class="bet-history-note" data-i18n="bet_history_note">Xem chi tiết cược đang chạy và kết quả tại đây.</div>
-    </div>
-    <a class="btn ghost small" href="{{ url_for('records', record_type='bet') }}" data-i18n="open_history">Mở lịch sử</a>
-  </div>
-
   <div class="bet-amount" data-balance="{{ '%.2f' % (user.balance if user else 0) }}">
     <h3 data-i18n="bet_amount_title">Tiền đặt cược</h3>
     <div class="balance-row"><span data-i18n="current_balance">Số dư hiện tại</span>: <strong id="balance-value">{{ '%.2f' % (user.balance if user else 0) }}$</strong></div>
