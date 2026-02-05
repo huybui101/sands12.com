@@ -1988,13 +1988,15 @@ input:focus, select:focus, textarea:focus {
 }
 
 .cskh-bar {
-  background: #4c6fff;
+  background: linear-gradient(135deg, #4c6fff, #7a5cff);
   color: #fff;
-  padding: 10px 14px;
+  padding: 16px 18px;
   border-radius: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  min-height: 56px;
+  font-weight: 600;
 }
 
 .cskh-body {
