@@ -1,6 +1,6 @@
 {
   "site_name": "SANDS",
-  "logo": "/static/images/logo.jpg",
+  "logo": "/static/images/logo-app.jpg",
   "landing_banner": "/static/images/landing-register.png",
   "hero_images": [
     "/static/images/hero-1.jpg",

@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{{ config.site_name if config else "Lucky 5D" }}</title>
+  <link rel="icon" href="/static/images/logo-app.jpg" />
+  <link rel="apple-touch-icon" href="/static/images/logo-app.jpg" />
+  <link rel="manifest" href="/static/manifest.json" />
+  <meta name="theme-color" content="{{ config.theme_primary if config else '#7d3cff' }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ config.updated_at if config else '' }}" />
   <script defer src="{{ url_for('static', filename='js/app.js') }}?v={{ config.updated_at if config else '' }}"></script>
 </head>
