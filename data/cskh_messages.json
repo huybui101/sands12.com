@@ -1,129 +1,192 @@
 {
   "46ebc11cbc7e4723aae3a9a7f4bbe2b9": {
-    "user_id": "a65e5fac28",
+    "user_id": "659194",
     "username": "Admin",
     "messages": [
       {
         "sender": "user",
         "text": "xin chào",
-        "ts": "2026-01-26T05:16:02.308211"
+        "ts": "2026-01-26T05:16:02.308211",
+        "id": "3488ac01ab",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "agent",
         "text": "CSKH đã nhận tin nhắn và sẽ phản hồi sớm.",
-        "ts": "2026-01-26T05:16:02.308211"
+        "ts": "2026-01-26T05:16:02.308211",
+        "id": "35c8eaaec8",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "user",
         "text": "Alo",
-        "ts": "2026-01-26T05:56:50.738541"
+        "ts": "2026-01-26T05:56:50.738541",
+        "id": "d73ad1e14d",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "agent",
         "text": "CSKH đã nhận tin nhắn và sẽ phản hồi sớm.",
-        "ts": "2026-01-26T05:56:50.738541"
+        "ts": "2026-01-26T05:56:50.738541",
+        "id": "a642dd227a",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "user",
         "text": "Cho tao nạp 1 tỷ",
-        "ts": "2026-01-26T05:56:54.979428"
+        "ts": "2026-01-26T05:56:54.979428",
+        "id": "b58b8cf494",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "agent",
         "text": "CSKH đã nhận tin nhắn và sẽ phản hồi sớm.",
-        "ts": "2026-01-26T05:56:54.979428"
+        "ts": "2026-01-26T05:56:54.979428",
+        "id": "f367e3980a",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "user",
         "text": "Alo",
-        "ts": "2026-01-26T06:03:08.507878"
+        "ts": "2026-01-26T06:03:08.507878",
+        "id": "8ba008b0ed",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "agent",
         "text": "CSKH đã nhận tin nhắn và sẽ phản hồi sớm.",
-        "ts": "2026-01-26T06:03:08.507878"
+        "ts": "2026-01-26T06:03:08.507878",
+        "id": "741eab6e79",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "user",
         "text": "Cho tao nạp 100 tỷ",
-        "ts": "2026-01-26T06:03:15.162791"
+        "ts": "2026-01-26T06:03:15.162791",
+        "id": "539ce089df",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "agent",
         "text": "CSKH đã nhận tin nhắn và sẽ phản hồi sớm.",
-        "ts": "2026-01-26T06:03:15.162791"
+        "ts": "2026-01-26T06:03:15.162791",
+        "id": "5f4901fa7d",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "agent",
         "text": "Ok",
-        "ts": "2026-01-26T06:50:30.042781"
+        "ts": "2026-01-26T06:50:30.042781",
+        "id": "71ccdaae41",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "user",
         "text": "Alo",
-        "ts": "2026-01-26T06:55:42.193981"
+        "ts": "2026-01-26T06:55:42.193981",
+        "id": "104c7c9aa2",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "agent",
         "text": "Ok",
-        "ts": "2026-01-26T16:55:21.829224"
+        "ts": "2026-01-26T16:55:21.829224",
+        "id": "cc1ec8e686",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "user",
         "text": "",
         "image": "/uploads/cskh-46ebc11cbc7e4723aae3a9a7f4bbe2b9-7643cf97224c41848f8f190b6ed4fd30.jpg",
-        "ts": "2026-01-27T18:19:31.216185"
+        "ts": "2026-01-27T18:19:31.216185",
+        "id": "6dc4d7e9f9",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "agent",
         "text": "sdsd",
         "image": "",
-        "ts": "2026-01-28T02:37:24.848557"
+        "ts": "2026-01-28T02:37:24.848557",
+        "id": "f5e8d1d9c5",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "agent",
         "text": "",
         "image": "/uploads/cskh-admin-8c12a9fcad834bdcb184153c72438525.jpg",
-        "ts": "2026-01-28T02:37:31.709927"
+        "ts": "2026-01-28T02:37:31.709927",
+        "id": "45812e86b3",
+        "deleted": false,
+        "deleted_by": ""
       }
     ]
   },
   "346ba9301b464fccb5e82f1786eb34ee": {
-    "user_id": "5ad396ee14",
+    "user_id": "825844",
     "username": "huybuikiki01@gmail.com",
     "messages": [
       {
         "sender": "user",
         "text": "Yêu cầu nạp tiền: 1000$",
-        "ts": "2026-01-27T15:16:05.001231"
+        "ts": "2026-01-27T15:16:05.001231",
+        "id": "8596253187",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "user",
         "text": "Yêu cầu nạp tiền: 1000$",
-        "ts": "2026-01-27T15:33:25.503653"
+        "ts": "2026-01-27T15:33:25.503653",
+        "id": "62d5e100a5",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "agent",
         "text": "Ok bạn",
-        "ts": "2026-01-27T15:39:50.512165"
+        "ts": "2026-01-27T15:39:50.512165",
+        "id": "24b946fb14",
+        "deleted": false,
+        "deleted_by": ""
       },
       {
         "sender": "user",
         "text": "hi",
         "image": "",
-        "ts": "2026-01-29T22:29:25.089147"
+        "ts": "2026-01-29T22:29:25.089147",
+        "id": "2198558246",
+        "deleted": false,
+        "deleted_by": ""
       }
     ]
   },
   "51a667d4f8bc43cba69f214757feb2c1": {
-    "user_id": "ee99a16298",
+    "user_id": "825613",
     "username": "huybui101",
     "messages": [
       {
         "sender": "user",
         "text": "chào bạn",
         "image": "",
-        "ts": "2026-01-30T09:07:06.580490"
+        "ts": "2026-01-30T09:07:06.580490",
+        "id": "61c62fffdb",
+        "deleted": false,
+        "deleted_by": ""
       }
     ]
   }
